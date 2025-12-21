@@ -1,0 +1,52 @@
+<?php
+header('Content-Type: application/json');
+if (isset($_SESSION['debug'])) {
+    $debug = $_SESSION['debug'];
+} else {$_SESSION['debug']=false; $debug=false;}
+$debug = $_SESSION['debug'];
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode(['error' => 'Session expired or not set. Please restart the experiment.']);
+    http_response_code(401); // Unauthorized
+    exit;
+}
+$_SESSION['step'] = 'goldsmi2';
+
+ob_start(); // Start output buffering
+
+echo '<input type="hidden" id="debugContainer" value="'.(bool)$debug.'">
+        <div id="trackCounter" class="track-counter">';
+echo ($_SESSION["lang"] == "ita") ? "questionario " : "questionnaire ";
+echo '4/4</div>';
+
+if (isset($_SESSION['lang']) && $_SESSION['lang'] == "eng") {
+echo '<h2>Musical Attitude and Skills 2/2</h2>
+<form id="goldsmi-form2" class="submit-and-proceed" method="post">
+    <input type="hidden" name="current_section" value="goldsmi2">
+
+<div id="questions-containergoldsmi2" class="form_container_fixed_header"></div>
+    <button type="submit">Submit and Next</button>
+</form>';
+} else {
+echo '
+<h2>Attitudine musicale 2/2</h2>
+<form id="goldsmi-form2" class="submit-and-proceed" method="post">
+    <input type="hidden" name="current_section" value="goldsmi2">
+
+<div id="questions-containergoldsmi2" class="form_container_fixed_header"></div>
+    <button type="submit">Invia e continua</button>
+</form>';
+}
+
+echo '
+<script>
+        var debug = <?php echo json_encode((bool)$debug); ?>;
+</script>
+<script src="../js/questionnaire_header_radios.js"></script>
+<script src="../js/goldsmi2.js"></script>';
+
+$htmlContent = ob_get_clean(); // Capture the HTML content
+echo json_encode(['success' => true, 'content' => $htmlContent]); // Return the content as JSON
+?>
+
+
