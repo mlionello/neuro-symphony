@@ -1,0 +1,83 @@
+{
+  "nb": {
+    "experiments": 8
+  },
+  "exp_id" : ["exp1", "exp2", "exp3", "exp4", "exp5", "exp6", "exp7", "exp8"],
+  "description_debug" : "./data/description_debug.csv",
+  "audio_path_debug" : "./data/audio_path_debug.csv",
+  "labels_path" : "./data/slider_labels_ita.csv",
+  "labels_path_eng": "./data/slider_labels.csv",
+  "number_descriptions_per_mvt_debug": 10,
+  "exp1": {
+    "title" : "Brahms, 3th symphony, conducted by Leonard Bernstein, Wiener Philharmoniker",
+    "audio_path_file" : "./data/audio_path_brahms3.csv",
+    "description_path": "./data/brahms3_processed.csv",
+    "description_path_eng": "./data/brahms3_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_1.csv"
+  },
+  "exp2": {
+    "title" : "Dvorak, 8th symphony, conducted by Rafael Kubelik, Berliner Philarmoniker",
+    "audio_path_file" : "./data/audio_path_dvorak8.csv",
+    "description_path" : "./data/dvorak8_processed.csv",
+    "description_path_eng" : "./data/dvorak8_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_2.csv"
+  },
+  "exp3": {
+    "title" : "Schumann, 2th symphony, conducted by Leonard Bernstein, Wiener Philarmoniker",
+    "audio_path_file" : "./data/audio_path_schumann2.csv",
+    "description_path" : "./data/schumann2_processed.csv",
+    "description_path_eng" : "./data/schumann2_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_3.csv"
+  },
+  "exp4": {
+    "title" : "Beethoven, 6th symphony, conducted by Claudio Abbado, Wiener Philharmoniker",
+    "audio_path_file" : "./data/audio_path_beethoven6.csv",
+    "description_path" : "./data/beethoven6_processed.csv",
+    "description_path_eng" : "./data/beethoven6_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_4.csv"
+  },
+  "exp5": {
+    "title" : "Beethoven, 4th symphony, conducted by Herbert von Karajan, Berliner Philarmoniker ",
+    "audio_path_file" : "./data/audio_path_beethoven4.csv",
+    "description_path" : "./data/beethoven4_processed.csv",
+    "description_path_eng" : "./data/beethoven4_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_5.csv"
+  },
+  "exp7": {
+    "title": "Schubert, 4th symphony, conducted by Herbert von Karajan, Berliner Philharmoniker",
+    "audio_path_file" : "./data/audio_path_schubert4.csv",
+    "description_path": "./data/schubert4_processed.csv",
+    "description_path_eng": "./data/schubert4_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_7.csv"
+  },
+  "exp6": {
+    "title" : "Schumann, 4th symphony, conducted by Leonard Bernstein, Wiener Philharmoniker Orchestre",
+    "audio_path_file" : "./data/audio_path_schumann4.csv",
+    "description_path" : "./data/schumann4_processed.csv",
+    "description_path_eng" : "./data/schumann4_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_6.csv"
+  },
+  "exp8": {
+    "title" : "Mendelssohn, 4th symphony, conducted by Myung-Whun Chung, Orchestre Philarmonique de Radio France ",
+    "audio_path_file" : "./data/audio_path_mendelssohn4.csv",
+    "description_path" : "./data/mendelssohn4_processed.csv",
+    "description_path_eng" : "./data/mendelssohn4_processed_eng.csv",
+    "number_descriptions_per_mvt": 18,
+    "number_mvt": 4,
+    "exp_conditions": "./data/shuffled_combination_8.csv"
+  }
+}
