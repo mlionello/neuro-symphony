@@ -14,6 +14,9 @@ from core.qc import anomaly_detector_like_legacy, normalize_for_qc
 from core.pressing import gmm_bimodal_threshold
 
 
+READING_MIN_MS = 10_000
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description=(
@@ -52,6 +55,7 @@ def main() -> int:
         df_raw,
         pressing_column=args.column,
         pressing_upper_limit=float(args.upper_limit),
+        reading_thr=READING_MIN_MS,
     )
 
     # Keep the legacy diagnostic printout for the GMM
@@ -69,9 +73,11 @@ def main() -> int:
     out_filt = Path(args.out_filtered) if args.out_filtered else inp.with_name(inp.stem + "_filtered.csv")
 
     df = normalize_for_qc(df_raw)
+    residual_row_reading_mask = df['track_reading_duration'].fillna(0) < READING_MIN_MS
 
-    # Row-level excluded dataset (mirrors the legacy excluded_data.csv spirit)
-    excluded_rows = df[df["userid"].astype(str).isin(ex.excluded_union)].copy()
+    excluded_mask = df["userid"].astype(str).isin(ex.excluded_union) | residual_row_reading_mask
+    excluded_rows = df[excluded_mask].copy()
+
     # Keep the same key columns as the dissertation export (plus reason flags)
     keep_cols = [
         c
@@ -89,7 +95,8 @@ def main() -> int:
     ]
     excluded_rows["flag_poor_button_activity"] = excluded_rows["userid"].astype(str).isin(ex.excluded_pressing)
     excluded_rows["flag_not_engaged"] = excluded_rows["userid"].astype(str).isin(ex.excluded_not_engaged)
-    excluded_rows["flag_skipping_description"] = excluded_rows["userid"].astype(str).isin(ex.excluded_skipping_desc)
+    excluded_rows["flag_skipping_description"] = (excluded_rows["userid"].astype(str).isin(ex.excluded_skipping_desc) |
+                                                  residual_row_reading_mask.loc[excluded_rows.index])
 
     out_anom.parent.mkdir(parents=True, exist_ok=True)
     excluded_rows[keep_cols + ["flag_poor_button_activity", "flag_not_engaged", "flag_skipping_description"]].to_csv(
@@ -97,7 +104,10 @@ def main() -> int:
     )
     print(f"Wrote excluded rows -> {out_anom}")
 
-    filtered = df_raw[~df_raw["userid"].astype(str).isin(ex.excluded_union)].copy()
+    user_excl_mask = df["userid"].astype(str).isin(ex.excluded_union)
+    excluded_mask = user_excl_mask | residual_row_reading_mask
+    filtered = df.loc[~excluded_mask].copy()
+
     out_filt.parent.mkdir(parents=True, exist_ok=True)
     filtered.to_csv(out_filt, index=False)
     print(f"Wrote filtered dataset -> {out_filt}")

@@ -109,6 +109,7 @@ def anomaly_detector_like_legacy(
     df_raw: pd.DataFrame,
     pressing_column: str = "total_events",
     pressing_upper_limit: float = 80,
+    reading_thr: int = 10000,
 ) -> ExclusionResult:
     """Compute exclusions using the same logic as the legacy `anomaly_detector`.
 
@@ -188,8 +189,8 @@ def anomaly_detector_like_legacy(
 
     # --- Exclusion categories ---
     # 1) Skipping description: reading_dur < 10 seconds (10,000 ms)
-    reading = pd.to_numeric(df["reading_dur"], errors="coerce")
-    users_skip = df.loc[reading < 10_000, "userid"].astype(str).tolist()
+    reading = pd.to_numeric(df["track_reading_duration"], errors="coerce")
+    users_skip = df.loc[reading < reading_thr, "userid"].astype(str).tolist()
     users_skip = _apply_multi_session_grace_rule(df, users_skip, max_ratio=(1 / 8))
 
     # 2) Not engaged: any of track_q1_1..3 < 2

@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+import numpy as np
 import pandas as pd
 
 from .goldmsi import compute_goldmsi_scores
 
 
-COND_MAP = {1: 'TT', 2: 'TF', 3: 'FT', 4: 'FF'}
+COND_MAP = {1: 'TT', 2: 'TF', 3: 'FT', 4: 'FF'} # compare with web/
 Q_LABELS = {"track_q2_1": 'perceivedpos', "track_q2_2": 'perceivedneg', "track_q2_3": 'recognpos', "track_q2_4": 'recognneg'}
+
 
 def _safe_int(x: Any, default: Optional[int] = None) -> Optional[int]:
     try:
@@ -134,13 +135,10 @@ def _norm_list(x, n=4, fill=None):
 
 
 def _is_complete_session(cond_per_session, desc_indices, descriptions):
-    # require all 4 conditions present
     if any(v is None for v in cond_per_session):
         return False
-    # require all 4 description indices present (allow -1 if your web uses it)
     if any(v is None for v in desc_indices):
         return False
-    # require all 4 descriptions present and non-empty
     if any((d is None) or (isinstance(d, dict) and not d.get("description")) or (isinstance(d, str) and not d.strip())
            for d in descriptions):
         return False
@@ -228,6 +226,7 @@ def extract_merged_experiment_table(
 
             for track_n in range(1, 5):
                 track = exp.get(f"track_{track_n}", {}) or {}
+                track_condition = np.where(np.array(cond_per_session) == track_n)[0][0] + 1
 
                 r: Dict[str, Any] = {}
                 r.update(user_level)
@@ -236,14 +235,14 @@ def extract_merged_experiment_table(
                         "expid": expid,
                         "track_number": track_n,
                         "who5_sum": who5,
-                        "cond_track": (cond_per_session[track_n - 1] if len(cond_per_session) >= track_n else None),
                         "description_line": (desc_indices[track_n - 1] if len(desc_indices) >= track_n else None),
                         "description_text": (
                             (descriptions[track_n - 1] or {}).get("description")
                             if isinstance(descriptions[track_n - 1], dict)
                             else None
                         ),
-                        "condition": COND_MAP.get(cond_per_session[track_n - 1], 'NA')
+                        "track_condition": track_condition,
+                        "condition": COND_MAP.get(track_condition, 'NA')
                     }
                 )
 
@@ -255,9 +254,10 @@ def extract_merged_experiment_table(
 
                 # track questionnaire
                 for k, v in track.items():
-                    if k in {"current_section", "section_name", "track_index", "track_index_next"}:
+                    if k in {"current_section", "section_name", "track_index", "track_index_next", "track_condition"}:
                         continue
                     r[f"track_{k}"] = v
+
 
                 for init_q_label, verbose_label in Q_LABELS.items():
                     r[verbose_label] = r[init_q_label]
