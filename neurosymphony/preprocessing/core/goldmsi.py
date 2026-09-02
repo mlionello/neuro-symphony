@@ -5,10 +5,6 @@ from typing import Iterable, Mapping, Sequence
 
 import numpy as np
 
-# NOTE: This is the Italian adaptation used in the project.
-# The scoring here follows the original repository code: simple sums per subscale
-# after reversing "opp" items and mapping multiple-choice duration items.
-
 GOLDMSI_ITEMS = [
     {"ae": 0.6, "gf": 0.97, "text": "1. Trascorro molto del mio tempo libero a fare attività relative alla musica."},
     {"em": 0.5, "text": "2. A volte scelgo musica che mi fa venire i brividi lungo la schiena."},
@@ -63,10 +59,6 @@ MULTIPLE_OPTION_ITEMS = [
 
 
 def _map_multiple_choice_answer(raw: str, options: Sequence[str]) -> int:
-    """Return the index of `raw` inside `options`.
-
-    Raises ValueError if `raw` is not found.
-    """
     for idx, opt in enumerate(options):
         if str(raw).strip() == str(opt).strip():
             return idx
@@ -74,37 +66,16 @@ def _map_multiple_choice_answer(raw: str, options: Sequence[str]) -> int:
 
 
 def compute_goldmsi_scores(answers: Sequence[str | int | float]) -> dict[str, float]:
-    """Compute Gold-MSI subscale sums.
-
-    Parameters
-    ----------
-    answers:
-        Sequence of length >= 39 containing the answers as stored by the web app.
-
-    Returns
-    -------
-    dict
-        Keys: ae_score, pa_score, sa_score, mt_score, em_score, gf_score
-
-    Notes
-    -----
-    This function mirrors the original project code: it uses **simple sums**
-    per subscale (not weighted sums), after reversing 'opp' items and mapping the
-    7 multiple-choice items (indices 31..37, zero-based) to their option index.
-    """
     if len(answers) < 39:
         raise ValueError(f"Expected at least 39 Gold-MSI answers, got {len(answers)}")
 
-    # Work on a copy
     vals = [None] * 39
     for i in range(39):
         vals[i] = answers[i]
 
-    # Map multiple-choice items (32..38 in human numbering -> indices 31..37)
     for j, idx in enumerate(range(31, 38)):
         vals[idx] = _map_multiple_choice_answer(vals[idx], MULTIPLE_OPTION_ITEMS[j])
 
-    # Reverse 'opp' items (1..31 are Likert 1..7; reverse uses 8-x)
     for i, item in enumerate(GOLDMSI_ITEMS):
         if item.get("opp"):
             try:

@@ -1,97 +1,95 @@
-# Music Context — analysis utilities (gpt-adaptation, manually checked and fixed)
+# Neuro-Symphony preprocessing pipeline
 
-This folder contains a gpt-cleaned version of the data extraction scripts used to process the data collected by the web app (stored in `web/userdata/`).
+This folder contains the data extraction pipeline used to
+process the data collected by the web app (stored in `../web/userdata/`).
 
 ## Quick start
 
-From the **project root** (the folder that contains `web/`):
+From **this folder** (`preprocessing/`, the one containing `core/` and `scripts/`):
 
 ```bash
-# create venv (recommended)
-python -m venv .venv
-source .venv/bin/activate
-
-pip install -r code_cleaned/requirements.txt
-
-# make the package visible
-export PYTHONPATH="$PWD/code_cleaned/src"
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt          # numpy, pandas, matplotlib, scikit-learn
+export PYTHONPATH="$PWD"                 # core/ is a package, importable as `core.*`
 ```
 
-## Commands
+Optional feedback-rating step needs `pip install -r requirements-openai.txt` and
+`OPENAI_API_KEY` set.
 
-### 1) Extract and merge experiment data
-Build a single flat CSV (`merged_exp_data.csv`) from the per-user JSON/CSV logs.
+## Pipeline stages, run in this order
+
+### 1) Extract, compute metrics, and QC
+
+`scripts.extract_final` walks `../web/userdata/user_*/*.json` + per-track pressing
+CSVs, joins in `../web/data/framework.json` metadata and a ratings folder
+(via `--ratings`), computes per-row button-press metrics, and applies
+exclusion/QC logic (poor button activity / not engaged / skipped
+description reading, including a "grace rule" for multi-symphony
+participants).
 
 ```bash
-python -m scripts.extract_data \
-  --userdata web/userdata \
-  --framework web/data/framework.json \
-  --out merged_exp_data.csv
+python -m scripts.extract_final \
+  --userdata ../web/userdata \
+  --framework ../web/data/framework.json \
+  --ratings ../data/programnotes/ratings \
+  --out merged_exp_data_with_metrics.csv \
+  --out-final final.csv
 ```
 
-### 2) Compute pressing-task metrics (optional)
-Adds button-press metrics (activation rate, event rate, durations, total events) to the merged table.
+Omit `--feedback` to stop after the QC'd table (the default). Pass
+`--feedback <csv>` (the output of stage 2 below) to merge in feedback ratings via
+`core.merge.merge_feedback`.
+
+### 2) Rate open-ended feedback text (off by default)
+
+Uses `core/openai_feedback.py` to LLM-rate open-ended feedback text for
+valence/arousal and narrativity. Needs `OPENAI_API_KEY`.
 
 ```bash
-python -m scripts.add_pressing_metrics \
-  --in merged_exp_data.csv \
-  --out merged_exp_data_with_metrics.csv
-```
-
-### 3) Detect Participants to exclude
-
-Detects low-quality/abnormal participants using the **same filtering logic as the original** `anomaly_detector(final_df)`, the “Poor Buttons Activity” GMM-based thresholding on a chosen metric (default use: `total_events`).
-
-- Fits a **2-component GMM** on the selected `--column` (e.g., `total_events`) within an optional `--upper-limit` cap.
-- Reproduces legacy exclusion criteria and outputs:
-  - `*_excluded_rows.csv` — row-level data for excluded participants with boolean flags per criterion
-  - `*_excluded_users.csv` — user-level summary of exclusion flags
-  - `*_filtered.csv` — dataset with excluded participants removed
-- With `--plot`, generates the **original histogram format** and the **venn3 overlap** plot for excluded participants.
-
-```bash
-python -m scripts.pressing_qc \
-  --in merged_exp_data_with_metrics.csv \
-  --column total_events \
-  --upper-limit 80 \
-  --plot
-```
-
-### 4) Process open-ended feedback with OpenAI (optional)
-This is **off by default**. It requires an API key and installs extra dependencies.
-
-```bash
-pip install -r code_cleaned/requirements-openai.txt
-export OPENAI_API_KEY="..."
-
 python -m scripts.process_feedback_openai \
-  --in merged_exp_data.csv \
-  --framework web/data/framework.json \
-  --descriptions path/to/descriptions_folder \
-  --out processed_feedback_results.csv
+  --in merged_exp_data_with_metrics.csv \
+  --framework ../web/data/framework.json \
+  --descriptions ../web/data \
+  --out feedbacks_metrics.csv
 ```
 
-### 5) Merge the two datasets into a final one
+Its output is what stage 1's `--feedback` flag merges in.
 
+### 3) Build the analysis-ready tables
+
+`scripts.build_dataset` takes stage 1's `final.csv` and produces the
+`final_aggr*.csv` variants the downstream mixed-effects models
+(`../analysis/finalanalysisandplots.R`) and power analysis read:
 
 ```bash
-python -m scripts.merge_feedback \
-  --base merged_exp_data.csv \
-  --feedback processed_feedback_results.csv \
-  --out final_dataset.csv
+python -m scripts.build_dataset --in final.csv --mode both
 ```
+
+- `dataset_categoricalonly.csv` (`--mode positive`) — movement-level positive-valence
+  gate + row QC; the categorical mixed-effects model's dataset.
+- `dataset.csv` (`--mode raw`) — passthrough, no QC filtering; the
+  continuous-valence model's dataset.
+- `final_aggr_allmovements_qc.csv` (`--mode all`) — row QC only, no movement-level
+  gate.
+
+`dataset.csv` and `dataset_categoricalonly.csv` are checked into this folder as
+the exact tables the R scripts were run against.
 
 ## Project layout
 
 ```
-code_cleaned/
+preprocessing/
   README.md
   requirements.txt              # minimal dependencies
   requirements-openai.txt       # optional (feedback processing)
-  src/neurosymphony_context/    # reusable functions
-  scripts/                      # CLI scripts
+  core/                         # reusable functions (the schema/QC authority)
+  scripts/                      # CLI stages (extract_final, process_feedback_openai, build_dataset)
+  dataset.csv            # continuous-valence model's input table
+  dataset_categoricalonly.csv        # categorical model's input table
 ```
 
 ## Notes
-- The scripts assume the **same data schema** produced by the web app (JSON user profiles + per-track CSV logs).
-- Any plots are optional and never required to run the pipeline.
+- The scripts assume the same raw-data schema produced by the web app (JSON user
+  profiles + per-track CSV logs) — see `core/extract.py` for the schema details.
+- There is no test suite; correctness is verified by comparing outputs against
+  reference CSVs.

@@ -1,0 +1,300 @@
+Welcome to emmeans.
+Caution: You lose important information if you filter this package's results.
+See '? untidy'
+
+--- Perceived Positive Emotion Intensity | categorical (aggregated_condition_affective) ---
+ model term                             df1 df2 F.ratio  Chisq p.value
+ aff_cond                                 1 Inf  12.629 12.629  0.0004
+ aggregated_condition_injected            1 Inf   0.012  0.012  0.9130
+ aff_cond:aggregated_condition_injected   1 Inf   2.330  2.330  0.1269
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   4.81 0.240 Inf      4.34      5.28
+ Aff Opp     4.34 0.239 Inf      3.87      4.81
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+NOTE: Results may be misleading due to involvement in interactions
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.468 0.132 Inf   3.554  0.0004
+
+Results are averaged over the levels of: aggregated_condition_injected 
+aggregated_condition_injected = Inj:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   4.90 0.255 Inf      4.40      5.40
+ Aff Opp     4.23 0.257 Inf      3.73      4.74
+
+aggregated_condition_injected = Ref:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   4.72 0.260 Inf      4.21      5.23
+ Aff Opp     4.45 0.255 Inf      3.95      4.94
+
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ contrast            estimate   SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.667 0.18 Inf   3.708  0.0002
+
+aggregated_condition_injected = Ref:
+ contrast            estimate   SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.270 0.19 Inf   1.421  0.1554
+
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Perceived Positive Emotion Intensity | continuous (description_score_mvt_valence) ---
+ model term                             df1 df2 F.ratio  Chisq p.value
+ aff_cond                                 1 Inf  14.805 14.805  0.0001
+ aggregated_condition_injected            1 Inf   0.049  0.049  0.8256
+ aff_cond:aggregated_condition_injected   1 Inf   3.484  3.484  0.0620
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   4.47 0.216 Inf      4.04      4.89
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   4.45 0.224 Inf      4.01      4.89
+
+aggregated_condition_injected = Ref:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   4.48 0.224 Inf      4.04      4.92
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             4.11 0.244 Inf      3.63      4.59
+ Ref                             4.35 0.236 Inf      3.89      4.82
+
+aff_cond = 5.69:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             4.45 0.224 Inf      4.01      4.89
+ Ref                             4.48 0.224 Inf      4.04      4.92
+
+aff_cond = 8.50:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             4.80 0.237 Inf      4.33      5.26
+ Ref                             4.60 0.241 Inf      4.13      5.08
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ contrast  estimate    SE  df z.ratio p.value
+ Inj - Ref  -0.2456 0.166 Inf  -1.483  0.1381
+
+aff_cond = 5.69:
+ contrast  estimate    SE  df z.ratio p.value
+ Inj - Ref  -0.0259 0.117 Inf  -0.220  0.8256
+
+aff_cond = 8.50:
+ contrast  estimate    SE  df z.ratio p.value
+ Inj - Ref   0.1939 0.167 Inf   1.161  0.2456
+
+ aggregated_condition_injected aff_cond.trend     SE  df asymp.LCL asymp.UCL
+ Inj                                   0.1225 0.0313 Inf    0.0612     0.184
+ Ref                                   0.0444 0.0290 Inf   -0.0123     0.101
+
+Confidence level used: 0.95 
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref    0.078 0.0418 Inf   1.867  0.0620
+
+NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Perceived Negative Emotion Intensity | categorical (aggregated_condition_affective) ---
+ model term                             df1 df2 F.ratio Chisq p.value
+ aff_cond                                 1 Inf   5.524 5.524  0.0188
+ aggregated_condition_injected            1 Inf   0.014 0.014  0.9043
+ aff_cond:aggregated_condition_injected   1 Inf   0.443 0.443  0.5055
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   2.96 0.234 Inf      2.51      3.42
+ Aff Opp     3.35 0.233 Inf      2.89      3.81
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+NOTE: Results may be misleading due to involvement in interactions
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp   -0.384 0.163 Inf  -2.350  0.0188
+
+Results are averaged over the levels of: aggregated_condition_injected 
+aggregated_condition_injected = Inj:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   3.03 0.257 Inf      2.52      3.53
+ Aff Opp     3.30 0.260 Inf      2.80      3.81
+
+aggregated_condition_injected = Ref:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   2.90 0.266 Inf      2.38      3.42
+ Aff Opp     3.39 0.258 Inf      2.89      3.90
+
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp   -0.276 0.223 Inf  -1.237  0.2160
+
+aggregated_condition_injected = Ref:
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp   -0.491 0.235 Inf  -2.085  0.0370
+
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Perceived Negative Emotion Intensity | continuous (description_score_mvt_valence) ---
+ model term                             df1 df2 F.ratio Chisq p.value
+ aff_cond                                 1 Inf   3.088 3.088  0.0789
+ aggregated_condition_injected            1 Inf   0.000 0.000  0.9955
+ aff_cond:aggregated_condition_injected   1 Inf   0.165 0.165  0.6847
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond emmean   SE  df asymp.LCL asymp.UCL
+     5.69   3.23 0.21 Inf      2.82      3.64
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   3.23 0.221 Inf       2.8      3.66
+
+aggregated_condition_injected = Ref:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   3.23 0.221 Inf       2.8      3.66
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             3.33 0.248 Inf      2.84      3.82
+ Ref                             3.39 0.238 Inf      2.92      3.85
+
+aff_cond = 5.69:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             3.23 0.221 Inf      2.80      3.66
+ Ref                             3.23 0.221 Inf      2.80      3.66
+
+aff_cond = 8.50:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             3.13 0.239 Inf      2.66      3.60
+ Ref                             3.08 0.244 Inf      2.60      3.55
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ contrast   estimate    SE  df z.ratio p.value
+ Inj - Ref -0.056960 0.195 Inf  -0.292  0.7700
+
+aff_cond = 5.69:
+ contrast   estimate    SE  df z.ratio p.value
+ Inj - Ref -0.000771 0.138 Inf  -0.006  0.9955
+
+aff_cond = 8.50:
+ contrast   estimate    SE  df z.ratio p.value
+ Inj - Ref  0.055419 0.196 Inf   0.282  0.7777
+
+ aggregated_condition_injected aff_cond.trend     SE  df asymp.LCL asymp.UCL
+ Inj                                  -0.0348 0.0367 Inf    -0.107    0.0372
+ Ref                                  -0.0547 0.0340 Inf    -0.121    0.0119
+
+Confidence level used: 0.95 
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref     0.02 0.0491 Inf   0.406  0.6847
+
+NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Perceived Link With Description | categorical (aggregated_condition_affective) ---
+ model term                             df1 df2 F.ratio  Chisq p.value
+ aff_cond                                 1 Inf  36.906 36.906 <0.0001
+ aggregated_condition_injected            1 Inf   0.156  0.156  0.6929
+ aff_cond:aggregated_condition_injected   1 Inf   0.751  0.751  0.3863
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond  emmean     SE  df asymp.LCL asymp.UCL
+ Aff Coher   3.32 0.0934 Inf      3.14      3.50
+ Aff Opp     2.65 0.0917 Inf      2.47      2.83
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+NOTE: Results may be misleading due to involvement in interactions
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.672 0.111 Inf   6.075 <0.0001
+
+Results are averaged over the levels of: aggregated_condition_injected 
+aggregated_condition_injected = Inj:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   3.25 0.118 Inf      3.02      3.48
+ Aff Opp     2.67 0.121 Inf      2.44      2.91
+
+aggregated_condition_injected = Ref:
+ aff_cond  emmean    SE  df asymp.LCL asymp.UCL
+ Aff Coher   3.39 0.127 Inf      3.14      3.64
+ Aff Opp     2.62 0.119 Inf      2.39      2.85
+
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.577 0.153 Inf   3.759  0.0002
+
+aggregated_condition_injected = Ref:
+ contrast            estimate    SE  df z.ratio p.value
+ Aff Coher - Aff Opp    0.768 0.159 Inf   4.824 <0.0001
+
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Perceived Link With Description | continuous (description_score_mvt_valence) ---
+ model term                             df1 df2 F.ratio  Chisq p.value
+ aff_cond                                 1 Inf  57.521 57.521 <0.0001
+ aggregated_condition_injected            1 Inf   1.816  1.816  0.1778
+ aff_cond:aggregated_condition_injected   1 Inf   0.013  0.013  0.9102
+
+NOTE: Results may be misleading due to involvement in interactions
+ aff_cond emmean     SE  df asymp.LCL asymp.UCL
+     5.69   2.98 0.0817 Inf      2.82      3.14
+
+Results are averaged over the levels of: aggregated_condition_injected 
+Confidence level used: 0.95 
+aggregated_condition_injected = Inj:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   2.92 0.094 Inf      2.73      3.10
+
+aggregated_condition_injected = Ref:
+ aff_cond emmean    SE  df asymp.LCL asymp.UCL
+     5.69   3.04 0.094 Inf      2.86      3.23
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             2.55 0.120 Inf      2.32      2.79
+ Ref                             2.69 0.110 Inf      2.47      2.91
+
+aff_cond = 5.69:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             2.92 0.094 Inf      2.73      3.10
+ Ref                             3.04 0.094 Inf      2.86      3.23
+
+aff_cond = 8.50:
+ aggregated_condition_injected emmean    SE  df asymp.LCL asymp.UCL
+ Inj                             3.28 0.114 Inf      3.06      3.50
+ Ref                             3.40 0.117 Inf      3.17      3.63
+
+Confidence level used: 0.95 
+aff_cond = 2.87:
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref   -0.136 0.1330 Inf  -1.025  0.3054
+
+aff_cond = 5.69:
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref   -0.125 0.0931 Inf  -1.348  0.1778
+
+aff_cond = 8.50:
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref   -0.115 0.1320 Inf  -0.869  0.3850
+
+ aggregated_condition_injected aff_cond.trend     SE  df asymp.LCL asymp.UCL
+ Inj                                    0.129 0.0247 Inf    0.0808     0.177
+ Ref                                    0.125 0.0227 Inf    0.0809     0.170
+
+Confidence level used: 0.95 
+ contrast  estimate     SE  df z.ratio p.value
+ Inj - Ref  0.00378 0.0335 Inf   0.113  0.9102
+
+NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions

@@ -32,7 +32,6 @@ def main() -> int:
         if not isinstance(feedback, str) or len(feedback.strip()) < 10:
             continue
 
-        # reference text shown to the participant (if available)
         ref_text = row.get("description_text") if isinstance(row.get("description_text"), str) else ""
 
         if not is_narrative(chat, feedback):
