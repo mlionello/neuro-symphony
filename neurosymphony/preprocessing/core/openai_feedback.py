@@ -30,23 +30,20 @@ def _extract_arousal_valence(text: str) -> Tuple[Optional[int], Optional[int]]:
 
 
 class OpenAIChat:
-    """Small compatibility wrapper supporting openai>=1 and legacy openai<1."""
-
     def __init__(self, model: str = "gpt-4o-mini", api_key: Optional[str] = False):
         self.model = model
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise RuntimeError("OPENAI_API_KEY is not set")
 
-        # Try new SDK first
         self._client = None
         try:
-            from openai import OpenAI  # type: ignore
+            from openai import OpenAI
 
             self._client = OpenAI(api_key=self.api_key)
             self._mode = "new"
         except Exception:
-            import openai  # type: ignore
+            import openai
 
             openai.api_key = self.api_key
             self._openai = openai

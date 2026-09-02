@@ -10,19 +10,6 @@ from sklearn.mixture import GaussianMixture
 
 @dataclass(frozen=True)
 class GMMThresholdResult:
-    """Result of a 2-component GMM fit on a 1D feature.
-
-    Attributes
-    ----------
-    threshold
-        Midpoint between the maximum value of the left cluster and the minimum
-        value of the right cluster.
-    labels
-        Per-row cluster labels (0/1) for the subset used to fit the model.
-    means
-        Component means (sorted).
-    """
-
     threshold: float
     labels: pd.Series
     means: Tuple[float, float]
@@ -34,22 +21,6 @@ def gmm_bimodal_threshold(
     upper_limit: Optional[float] = None,
     random_state: int = 0,
 ) -> GMMThresholdResult:
-    """Fit a 2-component GMM and compute a separation threshold.
-
-    Parameters
-    ----------
-    df
-        Input dataframe.
-    column
-        Column containing the feature (numeric).
-    upper_limit
-        If provided, only rows with values < upper_limit are used to fit.
-        This matches the original exploratory workflow.
-
-    Returns
-    -------
-    GMMThresholdResult
-    """
     if column not in df.columns:
         raise KeyError(f"Column not found: {column}")
 

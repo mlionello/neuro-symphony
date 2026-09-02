@@ -11,8 +11,9 @@ import pandas as pd
 from .goldmsi import compute_goldmsi_scores
 
 
-COND_MAP = {1: 'TT', 2: 'TF', 3: 'FT', 4: 'FF'} # compare with web/
+COND_MAP = {1: 'TT', 2: 'TF', 3: 'FT', 4: 'FF'}
 Q_LABELS = {"track_q2_1": 'perceivedpos', "track_q2_2": 'perceivedneg', "track_q2_3": 'recognpos', "track_q2_4": 'recognneg'}
+TRACK_QUESTION_COUNTS = {1: 3, 2: 4, 3: 2}  # q1_1..q1_3, q2_1..q2_4, q3_1..q3_2
 
 
 def _safe_int(x: Any, default: Optional[int] = None) -> Optional[int]:
@@ -23,13 +24,6 @@ def _safe_int(x: Any, default: Optional[int] = None) -> Optional[int]:
 
 
 def calculate_big_five_scores(ratings: List[float]) -> Dict[str, float]:
-    """Compute BFI-10 scores following the original project script.
-
-    Notes
-    -----
-    This replicates the behavior in the original `extract_data_to_table.py`:
-    reverse-scoring items {1,3,4,5,7} and summing item pairs.
-    """
     if len(ratings) != 10:
         raise ValueError("BFI-10 expects 10 ratings")
 
@@ -97,7 +91,6 @@ def _extract_user_level(user_json: Dict[str, Any], userid: str) -> Dict[str, Any
             gold_vals.append(g2.get(key))
 
     if all(v is not None for v in gold_vals[:38]):
-        # compute_goldmsi_scores expects 39 answers (1..39), we pass list length 39 with last possibly None
         scores = compute_goldmsi_scores(gold_vals)
         out.update({f"goldsmi_{k}": v for k, v in scores.items()})
 
@@ -105,7 +98,6 @@ def _extract_user_level(user_json: Dict[str, Any], userid: str) -> Dict[str, Any
 
 
 def _list_experiment_ids(user_json: Dict[str, Any]) -> List[str]:
-    # experiments are typically keys like "exp1", "exp2", ...
     exp_ids = [k for k in user_json.keys() if re.match(r"^exp\d+$", k)]
     exp_ids.sort(key=lambda s: int(s[3:]))
     return exp_ids
@@ -145,29 +137,18 @@ def _is_complete_session(cond_per_session, desc_indices, descriptions):
     return True
 
 
+def _load_ratings(rating_folder: Path, framework: Dict[str, Any], expid: str, cache: Dict[str, "pd.DataFrame"]):
+    if expid not in cache:
+        desc_path = Path(framework[expid]['description_path']).stem.split('_')[0]
+        cache[expid] = pd.read_csv(rating_folder / ("sorted_" + desc_path + "_rating.csv"))
+    return cache[expid]
+
+
 def extract_merged_experiment_table(
     userdata_dir: str | Path,
     framework_path: Optional[str | Path] = None,
     rating_folder: Optional[str | Path] = None,
 ) -> pd.DataFrame:
-    """Extract a flat table with one row per (user, experiment, track).
-
-    The function reads:
-    - `user_<ID>/<ID>.json` for questionnaires & metadata
-    - `user_<ID>/expX_tracciaY.csv` for pressing logs (file path is stored, not read)
-
-    Parameters
-    ----------
-    userdata_dir
-        Path to `web/userdata/`.
-    framework_path
-        Optional path to `web/data/framework.json` to add basic experiment metadata.
-        Optional path to `sinossi/out_sinossi_injected` to add metrics valence and arousal of descriptions.
-
-    Returns
-    -------
-    pandas.DataFrame
-    """
     userdata_dir = Path(userdata_dir)
     rating_folder = Path(rating_folder)
     if not userdata_dir.exists():
@@ -180,6 +161,7 @@ def extract_merged_experiment_table(
             framework = json.loads(fp.read_text(encoding="utf-8"))
 
     rows: List[Dict[str, Any]] = []
+    ratings_cache: Dict[str, Any] = {}
 
     for json_path in _iter_user_json_files(userdata_dir):
         userid = json_path.stem
@@ -218,11 +200,26 @@ def extract_merged_experiment_table(
             desc_indices = _norm_list(session.get("description_indices"), n=4, fill=None)
             descriptions = _norm_list(session.get("descriptions"), n=4, fill=None)
 
-            # If any None (or empty description), skip this experiment
             if not _is_complete_session(cond_per_session, desc_indices, descriptions) or any([int(a)<0 for a in desc_indices]):
                 continue
 
             post = exp.get("post_experiment", {}) or {}
+            ratings = _load_ratings(rating_folder, framework, expid, ratings_cache)
+
+            exp_level: Dict[str, Any] = {
+                "post_experiment_q1_1": post.get("q1_1"),
+                "post_experiment_q1_2": post.get("q1_2"),
+                "post_experiment_q1_3": post.get("q1_3"),
+                "post_experiment_q1_4": post.get("q1_4"),
+                "post_experiment_q1_5": post.get("q1_5"),
+                "post_experiment_q1_6": post.get("q1_6"),
+                "post_experiment_recon_auth": post.get("recon_auth"),
+                "post_experiment_recon_work": post.get("recon_work"),
+            }
+            if framework and expid in framework:
+                for meta_key in ["title", "composer", "name"]:
+                    if meta_key in framework[expid]:
+                        exp_level[f"framework_{meta_key}"] = framework[expid][meta_key]
 
             for track_n in range(1, 5):
                 track = exp.get(f"track_{track_n}", {}) or {}
@@ -230,6 +227,7 @@ def extract_merged_experiment_table(
 
                 r: Dict[str, Any] = {}
                 r.update(user_level)
+                r.update(exp_level)
                 r.update(
                     {
                         "expid": expid,
@@ -242,46 +240,38 @@ def extract_merged_experiment_table(
                             else None
                         ),
                         "track_condition": track_condition,
-                        "condition": COND_MAP.get(track_condition, 'NA')
+                        "condition": COND_MAP.get(track_condition, 'NA'),
+                        "reading_dur": track.get("reading_duration"),
+                        "starting_dur": track.get("starting_duration"),
+                        "questionnaire_dur": track.get("questionnaire_duration"),
+                        "listening_dur": track.get("listening_duration"),
+                        "track_reading_duration": track.get("reading_duration"),
+                        "track_starting_duration": track.get("starting_duration"),
+                        "track_questionnaire_duration": track.get("questionnaire_duration"),
+                        "track_listening_duration": track.get("listening_duration"),
+                        "feedback": post.get("comments"),
+                        "track_feedback": track.get("feedback"),
                     }
                 )
 
-                # post-experiment
-                for k, v in post.items():
-                    if k in {"current_section", "exp_id", "descriptions_class"}:
-                        continue
-                    r[f"post_experiment"] = v
-
-                # track questionnaire
-                for k, v in track.items():
-                    if k in {"current_section", "section_name", "track_index", "track_index_next", "track_condition"}:
-                        continue
-                    r[f"track_{k}"] = v
-
+                for q, n_items in TRACK_QUESTION_COUNTS.items():
+                    for i in range(1, n_items + 1):
+                        key = f"q{q}_{i}"
+                        if key in track:
+                            r[f"track_q{q}_{i}"] = track[key]
 
                 for init_q_label, verbose_label in Q_LABELS.items():
-                    r[verbose_label] = r[init_q_label]
+                    if init_q_label in r:
+                        r[verbose_label] = r[init_q_label]
 
-                # pressing log path (if present)
                 pressing_name = f"{expid}_traccia{track_n}.csv"
                 pressing_path = json_path.parent / pressing_name
                 if pressing_path.exists():
-                    # Backward-compatible field name (mirrors the original scripts)
                     r[f"track_pressing_csv"] = str(pressing_path)
 
-                    # Normalized field names (recommended)
                     r["pressing_csv"] = str(pressing_path)
                     r["pressing_track"] = track_n
 
-                # optional framework metadata
-                if framework and expid in framework:
-                    for meta_key in ["title", "composer", "name"]:
-                        if meta_key in framework[expid]:
-                            r[f"framework_{meta_key}"] = framework[expid][meta_key]
-
-                desc_path = Path(framework[expid]['description_path']).stem.split('_')[0]
-                rating_file = rating_folder / ("sorted_" + desc_path + "_rating.csv")
-                ratings = pd.read_csv(rating_file)
                 target_line = r["description_line"]
                 r.update({
                     'description_valence_mean': ratings.iloc[target_line]['valence_mean'],

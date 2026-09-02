@@ -2,8 +2,7 @@
 
 function deriveUserKey($username) {
     global $global_secret_key;
-    $key_path = '/var/secure/keys/neurosymphony_music_context.key';
-    $key_path = '/Users/mlionello/neurosymphony_music_context.key';
+    $key_path = '/var/###CENSURED###';
 
     // Check if the key file is accessible
     if (!file_exists($key_path) || !is_readable($key_path)) {

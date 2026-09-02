@@ -1,0 +1,52 @@
+
+[notice] A new release of pip is available: 24.3.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+loaded 153 rows (exp1/exp2, truepos-gated); condition counts:
+aggregated_condition_affective
+Aff Opp      79
+Aff Coher    74
+Name: count, dtype: int64
+
+7 movements
+
+wrote /code/neuro-symphony/neurosymphony/analysis/figures/h1_button_press_movement_summary_exp1exp2_truepos.csv (14 rows)
+
+=== Joy/Happiness (H: Coherent > Opposite) ===
+ all movements:
+  Joy/Happiness [greater], k=7: sign test 7/7 favorable, p=0.0078; Wilcoxon W=28.0, p=0.0078
+ excluding low_n:
+  Joy/Happiness [greater], k=7: sign test 7/7 favorable, p=0.0078; Wilcoxon W=28.0, p=0.0078
+
+=== Sadness (H: Coherent < Opposite) ===
+ all movements:
+  Sadness [less], k=7: sign test 6/7 favorable, p=0.0625; Wilcoxon W=4.0, p=0.0547
+ excluding low_n:
+  Sadness [less], k=7: sign test 6/7 favorable, p=0.0625; Wilcoxon W=4.0, p=0.0547
+
+=== permutation validity check (10000 permutations, label-reshuffled within movement) ===
+      channel  real_n_favorable  real_w_plus  permutation_p_sign  permutation_p_wilcoxon  fpr_sign_at_.05  fpr_wilcoxon_at_.05
+Joy/Happiness                 7         28.0            0.007099                0.007099           0.0070                0.039
+      Sadness                 6         24.0            0.064194                0.058594           0.0085                0.042
+
+wrote /code/neuro-symphony/neurosymphony/analysis/figures/h1_button_press_permutation_validity_exp1exp2_truepos.csv
+
+wrote /code/neuro-symphony/neurosymphony/analysis/figures/h1_button_press_slopeplot_exp1exp2_truepos.png
+
+=== Part B: legacy statistical method, on dataset_categoricalonly.csv data ===
+expid  movement response  n_sig_timepoints  M_coher  M_opp  mean_coher  mean_opp  mean_diff_coher_minus_opp  tstat_welch  p_one_sided  hedges_g  meets_direction  prop_timepoints_aligned
+ exp1         1   Joyful                 2       11     13    0.636364  0.153846                   0.482517     2.617256     0.008665  1.047553             True                 1.000000
+ exp1         1      Sad                 0       11     13         NaN       NaN                        NaN          NaN          NaN       NaN            False                      NaN
+ exp1         2   Joyful                 5       12     13    0.700000  0.200000                   0.500000     3.337225     0.001566  1.297883             True                 1.000000
+ exp1         2      Sad                24       12     13    0.173611  0.605769                  -0.432158    -3.714475     0.000638 -1.427029             True                 0.958333
+ exp1         3   Joyful                 0        7     12         NaN       NaN                        NaN          NaN          NaN       NaN            False                      NaN
+ exp1         3      Sad                 3        7     12    0.142857  0.750000                  -0.607143    -3.137213     0.003475 -1.391536             True                 1.000000
+ exp1         4   Joyful                12       13     12    0.551282  0.097222                   0.454060     3.205040     0.002291  1.228079             True                 1.000000
+ exp1         4      Sad                10       13     12    0.184615  0.691667                  -0.507051    -3.397308     0.001332 -1.320225             True                 1.000000
+ exp2         1   Joyful                11       11      9    0.578512  0.111111                   0.467401     3.418568     0.001534  1.453672             True                 1.000000
+ exp2         1      Sad                13       11      9    0.349650  0.871795                  -0.522145    -2.943130     0.004564 -1.238324             True                 1.000000
+ exp2         3   Joyful                29       12      9    0.683908  0.183908                   0.500000     3.591987     0.000984  1.478099             True                 1.000000
+ exp2         3      Sad                 0       12      9         NaN       NaN                        NaN          NaN          NaN       NaN            False                      NaN
+ exp2         4   Joyful                10        8     11    0.712500  0.218182                   0.494318     2.925765     0.005229  1.301688             True                 1.000000
+ exp2         4      Sad                 0        8     11         NaN       NaN                        NaN          NaN          NaN       NaN            False                      NaN
+
+wrote /code/neuro-symphony/neurosymphony/analysis/figures/h1_button_press_clusterperm_exp1exp2_truepos.csv

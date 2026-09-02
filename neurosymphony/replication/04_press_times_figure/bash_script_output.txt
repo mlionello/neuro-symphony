@@ -1,0 +1,5 @@
+
+[notice] A new release of pip is available: 24.3.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+n participants: 24 (Coherent=11, Opposite=13)
+wrote /code/neuro-symphony/neurosymphony/analysis/figures/press_times_example.png

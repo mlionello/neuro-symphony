@@ -4,20 +4,20 @@ dir_rows = [];
 
 response_title = {"Joyful","Sad"};
 
-outdir = fullfile(pwd, 'plots_out');  % change if you want another folder
+outdir = fullfile(pwd, 'plots_out');
 if ~exist(outdir, 'dir'), mkdir(outdir); end
-dpi = 300;         % 300 dpi is print-quality
-imgfmt = 'png';    % 'png' is good for raster; consider 'pdf' for vector
-figSize = [100 100 1700 900];  % [left bottom width height] in pixels
+dpi = 300;
+imgfmt = 'png';
+figSize = [100 100 1700 900];
 
-fs_axes   = 18;   % tick labels
-fs_label  = 22;   % x/y labels
-fs_title  = 24;   % panel titles
-fs_legend = 18;   % legend
-fs_super  = 26;   % sgtitle
+fs_axes   = 18;
+fs_label  = 22;
+fs_title  = 24;
+fs_legend = 18;
+fs_super  = 26;
 
-for expid = 1:2 % symphony id
-    for tracknumber = 1:4 % mvt id
+for expid = 1:2
+    for tracknumber = 1:4
         if (expid == 1 && tracknumber == 3) || (expid == 2 && tracknumber == 2)
             continue
         end
@@ -41,8 +41,8 @@ for expid = 1:2 % symphony id
 
             opphappy = cellfun(@(x) x(1:min(a,b), affective), affopp.data, 'UniformOutput', false);
             coherhappy = cellfun(@(x) x(1:min(a,b), affective), affcoher.data, 'UniformOutput', false);
-            X_opp   = cell2mat(opphappy');     % [N x M]
-            X_coher = cell2mat(coherhappy');   % [N x M]
+            X_opp   = cell2mat(opphappy');
+            X_coher = cell2mat(coherhappy');
 
             [N, M_opp]   = size(X_opp);
             [~, M_coher] = size(X_coher);
@@ -61,8 +61,6 @@ for expid = 1:2 % symphony id
                    'Units','pixels','Position',figSize);
             set(figButter, 'DefaultAxesFontSize', fs_axes, ...
                'DefaultTextFontSize', fs_axes);
-            % figButter = figure('Color','w', ...
-            %     'Name', sprintf('Butterflies — %s | %s', baseTitle, resp_label));
 
             tlButter = tiledlayout(figButter, 2, 2, 'TileSpacing','compact','Padding','compact');
 
@@ -85,7 +83,7 @@ for expid = 1:2 % symphony id
             title(ax2, sprintf('Coher %s — N=%d timepts, M=%d subjects', resp_label, N, M_coher), 'FontSize', fs_title);
             xlabel(ax2, 'Time','FontSize', fs_label); ylabel(ax2, 'Value (0/1)','FontSize', fs_label); grid(ax2, 'on'); box(ax2, 'off');
 
-            % 3) Averages overlaid (wide bottom panel spanning two columns)
+            % 3) Averages overlaid
             ax3 = nexttile(tlButter, [1 2]);
             plot(ax3, t, avg_opp,   'Color', [0 0.2 0.8], 'LineWidth', 2); hold(ax3, 'on');
             plot(ax3, t, avg_coher, 'Color', [0.85 0.3 0], 'LineWidth', 2);
@@ -105,16 +103,15 @@ for expid = 1:2 % symphony id
             sg = sgtitle(figButter, sprintf('Butterflies — %s | %s', baseTitle, resp_label));
             sg.FontSize = fs_super;
 
-            t = (1:size(X_opp,1))';             % or your real time vector
+            t = (1:size(X_opp,1))';
 
-            alpha = 0.01;       % family-wise error rate
-            nPerm = 5000;       % permutations for the null (increase for stability)
-            rng(1);             % reproducibility
+            alpha = 0.01;
+            nPerm = 5000;
+            rng(1);
 
             [N, M1] = size(X_opp);
             [~, M2] = size(X_coher);
 
-            % Sanity checks
             if size(X_coher,1) ~= N
                 error('X_opp and X_coher must have the SAME number of timepoints (rows).');
             end
@@ -127,24 +124,21 @@ for expid = 1:2 % symphony id
                 cluster_perm_indep_welch(X_opp, X_coher, alpha, nPerm);
 
             resp_label = response_title{affective-2};   % "Joyful"/"Sad"
-            mask = sig_timepoints ~= 0;                  % logical mask of pointwise sig
+            mask = sig_timepoints ~= 0;
 
             if any(mask)
                 yyaxis(ax3, 'left');
                 hold(ax3, 'on');
             
-                % Get current y-limits and place the stars at the bottom
                 yl = ylim(ax3);
-                yStar = yl(1) * ones(sum(mask), 1);  % at bottom of the panel
+                yStar = yl(1) * ones(sum(mask), 1);
             
                 scatter(ax3, t(mask), yStar, 120, 'k', 'Marker', '*', ...
                     'DisplayName', 'Sig. timepoints');
 
-                % Average each subject over ONLY the significant timepoints
-                subj_opp  = mean(X_opp(mask,:),  1, 'omitnan');   % 1 x M1
-                subj_coh  = mean(X_coher(mask,:),1, 'omitnan');   % 1 x M2
+                subj_opp  = mean(X_opp(mask,:),  1, 'omitnan');
+                subj_coh  = mean(X_coher(mask,:),1, 'omitnan');
 
-                % One-sided Welch t-test matching your directional hypotheses
                 switch resp_label
                     case "Joyful"
                         tail = 'right';   % H1: Coherent > Opposite
@@ -162,19 +156,16 @@ for expid = 1:2 % symphony id
                 n1 = numel(subj_coh); n2 = numel(subj_opp);
                 s1 = std(subj_coh, 0, 'omitnan'); s2 = std(subj_opp, 0, 'omitnan');
                 d  = (m_coh - m_opp) / sqrt( (s1^2 + s2^2)/2 );
-                J  = 1 - 3/(4*(n1+n2)-9);           % small-sample correction
+                J  = 1 - 3/(4*(n1+n2)-9);
                 g  = d * J;
 
-                % Simple success flag: does the observed direction match the hypothesis?
-                expect_sign = strcmp(resp_label,"Joyful") * 1 + strcmp(resp_label,"Sad") * -1; % +1 or -1
+                expect_sign = strcmp(resp_label,"Joyful") * 1 + strcmp(resp_label,"Sad") * -1;
                 meets_direction = sign(diff_mean) == expect_sign;
 
-                % Proportion of sig timepoints where group averages align with hypothesis
-                avg_diff_trace = avg_coher - avg_opp;              % timewise averages
+                avg_diff_trace = avg_coher - avg_opp;
                 prop_aligned = mean( (expect_sign== 1 & avg_diff_trace(mask) > 0) | ...
                     (expect_sign==-1 & avg_diff_trace(mask) < 0) );
 
-                % Collect row
                 row = struct( ...
                     'expid', expid, ...
                     'movement', tracknumber, ...
@@ -190,7 +181,6 @@ for expid = 1:2 % symphony id
                     'prop_timepoints_aligned', prop_aligned ...
                     );
             else
-                % No pointwise significant timepoints to check
                 row = struct( ...
                     'expid', expid, ...
                     'movement', tracknumber, ...
@@ -208,13 +198,12 @@ for expid = 1:2 % symphony id
             end
 
 
-            dir_rows = [dir_rows; row]; %#ok<AGROW>
+            dir_rows = [dir_rows; row];
 
             %% Plot curves + significant clusters
 
             analyses = {sig_timepoints, sig_mask_cl};
 
-            % Compute common y-limits across both series so panels are comparable
             ymin = min([avg_opp(:); avg_coher(:)]);
             ymax = max([avg_opp(:); avg_coher(:)]);
             yrng = [ymin ymax];
@@ -225,13 +214,8 @@ for expid = 1:2 % symphony id
             % Plot the two curves
             hOpp   = plot(ax, t, avg_opp,   'Color', [0 0.2 0.8], 'LineWidth', 2, 'DisplayName', 'Opp avg');
             hCoher = plot(ax, t, avg_coher, 'Color', [0.85 0.3 0], 'LineWidth', 2, 'DisplayName', 'Coher avg');
-            % fill(ax, [t; flipud(t)], [avg_opp - sem_opp; flipud(avg_opp + sem_opp)], ...
-            %     [0.4 0.6 1], 'FaceAlpha', 0.2, 'EdgeColor', 'none');
-            % fill(ax, [t; flipud(t)], [avg_coher - sem_coher; flipud(avg_coher + sem_coher)], ...
-            %     [1 0.55 0.2], 'FaceAlpha', 0.2, 'EdgeColor', 'none');
             ylim(ax, yrng);
 
-            % Shade significant time windows for this analysis
             sig_blocks = find_clusters(analyses{1});
             yl = ylim(ax);
             for i = 1:numel(sig_blocks)
@@ -294,7 +278,6 @@ DirSum = sortrows(DirSum, {'expid','movement','response'});
 disp('=== Directional summary on pointwise significant timepoints ===');
 disp(DirSum);
 
-% Save to CSV (optional)
 out_csv = fullfile(pwd, 'directional_summary_on_sig_timepoints.csv');
 writetable(DirSum, out_csv);
 fprintf('Saved directional summary to %s\n', out_csv);
@@ -303,7 +286,6 @@ fprintf('Saved directional summary to %s\n', out_csv);
 
 function [sig_timepoints, sig_mask_cl] = ...
     cluster_perm_indep_welch(x1, x2, alpha, nPerm)
-% X1: N x M1, X2: N x M2
 ntimepoints = size(x1,1);
 
 valid_indices = ~(var(x1,0,2,'omitnan')==0 | var(x2,0,2,'omitnan')==0);
@@ -383,17 +365,12 @@ end
 % Cluster-size threshold at (1-alpha) of the null
 kcrit = prctile(max_null_sizes(2:end), 100*(1-alpha));
 
-% Significant clusters
 sig_idx = find(obs_sizes_clcorr{1} >= kcrit);
 sig_mask_cl = false(N,1);
-% for i = 1:numel(sig_idx)
-%     sig_mask_cl(clusters_obs{sig_idx(i)}) = true;
-% end
 
 end
 
 function C = find_clusters(mask)
-% Return cell array of contiguous true indices from a logical vector
 mask = mask(:);
 if ~any(mask); C = {}; return; end
 d = diff([false; mask; false]);
@@ -407,7 +384,6 @@ function out = ternary(cond, a, b)
 end
 
 function tf = sig_blocks_match(idx, blocks)
-    % Helper to tag printed clusters that are significant
     tf = false;
     for k = 1:numel(blocks)
         if idx(1) >= blocks{k}(1) && idx(end) <= blocks{k}(end)
@@ -417,7 +393,7 @@ function tf = sig_blocks_match(idx, blocks)
 end
 
 function y = getcumsum(x)
-    y = cumsum(x);                     % running sum of 1s
-    y = y - cummax((~x).*y);           % subtract last value seen at a zero
-    y(~x) = 0;                         % keep zeros as zeros
+    y = cumsum(x);
+    y = y - cummax((~x).*y);
+    y(~x) = 0;
 end

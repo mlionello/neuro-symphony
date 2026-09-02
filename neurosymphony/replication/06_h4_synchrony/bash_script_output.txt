@@ -1,0 +1,79 @@
+
+[notice] A new release of pip is available: 24.3.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+=== Part A: pca_composite_events.py (pure Python, no MATLAB needed) ===
+exp1 trk1: n=24, min_len=915, PC1 variance ratio=0.375
+exp1 trk2: n=25, min_len=574, PC1 variance ratio=0.289
+exp1 trk3: n=25, min_len=429, PC1 variance ratio=0.282
+exp1 trk4: n=25, min_len=572, PC1 variance ratio=0.311
+exp2 trk1: n=21, min_len=581, PC1 variance ratio=0.354
+exp2 trk2: n=21, min_len=604, PC1 variance ratio=0.356
+exp2 trk3: n=21, min_len=392, PC1 variance ratio=0.241
+exp2 trk4: n=19, min_len=503, PC1 variance ratio=0.312
+
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/pca_composite_manifest_exp1-exp2.csv (181 rows)
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/pca_composite_variance_explained.csv
+expid  track_number  n_participants  min_len  pc1_variance_ratio
+ exp1             1              24      915            0.375469
+ exp1             2              25      574            0.288546
+ exp1             3              25      429            0.282363
+ exp1             4              25      572            0.310826
+ exp2             1              21      581            0.354482
+ exp2             2              21      604            0.356016
+ exp2             3              21      392            0.240993
+ exp2             4              19      503            0.312377
+
+=== Part B: MATLAB + toolbox scoring ===
+MATLAB and/or /code/neuro-symphony/neurosymphony/ActivityAnalysisToolbox_2.1-master not found -- SKIPPING Part B.
+Part C below will instead run against this repo's checked-in reference
+toolbox-output CSVs (analysis/figures/h4_*_toolbox*.csv, h4_*permutation_test*.csv),
+verifying the aggregation logic only, not the toolbox scoring step itself.
+See /code/neuro-symphony/neurosymphony/analysis/synchrony_reanalysis/README.md to supply MATLAB + the toolbox and re-run Part B for a full replication.
+
+=== Part C: aggregation (pure Python, no MATLAB needed) ===
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/h4_within_synchrony_table_exp1-exp2.csv
+
+| Movement | all6\_pca (Aff Coher) | all6\_pca (Aff Opp) | sad (Aff Coher) | sad (Aff Opp) | joy (Aff Coher) | joy (Aff Opp) |
+|---|---|---|---|---|---|---|
+| exp1 trk1 | C=3.048, p=0.000895 | C=6.086, p=8.2e-07 | C=1.099, p=0.0796 | C=16.000, p=0$^{\dagger}$ | C=0.620, p=0.24 | C=3.370, p=0.000427 |
+| exp1 trk2 | C=1.498, p=0.0318 | C=0.830, p=0.148 | C=16.000, p=0$^{\dagger}$ | C=1.168, p=0.0679 | C=2.118, p=0.00762 | C=1.388, p=0.0409 |
+| exp1 trk3 | C=0.878, p=0.132 | C=0.410, p=0.389 | C=0.989, p=0.103 | C=1.141, p=0.0723 | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ |
+| exp1 trk4 | C=4.086, p=8.2e-05 | C=2.803, p=0.00157 | C=16.000, p=0$^{\dagger}$ | C=1.247, p=0.0566 | C=6.169, p=6.77e-07 | C=3.215, p=0.000609 |
+| exp2 trk1 | C=8.419, p=3.81e-09 | C=3.914, p=0.000122 | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ | C=0.715, p=0.193 | C=16.000, p=0$^{\dagger}$ |
+| exp2 trk2 | C=3.661, p=0.000218 | C=4.369, p=4.27e-05 | C=16.000, p=0$^{\dagger}$ | C=1.577, p=0.0265 | C=16.000, p=0$^{\dagger}$ | C=4.420, p=3.8e-05 |
+| exp2 trk3 | C=1.690, p=0.0204 | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ | C=2.996, p=0.00101 | C=16.000, p=0$^{\dagger}$ |
+| exp2 trk4 | C=16.000, p=0$^{\dagger}$ | C=3.226, p=0.000595 | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ | C=16.000, p=0$^{\dagger}$ | C=0.675, p=0.211 |
+
+$^{\dagger}$degenerate\_2bin: within-collection test fell back to 2 bins (toolbox dof=0 pins p at exactly 0) -- not treated as reliable evidence, per section 0g's convention.
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/h4_between_synchrony_table_exp1-exp2.csv
+
+| button_subset | Aff Coher (k, Fisher obs, null 95th pct, perm p) | Aff Opp (k, Fisher obs, null 95th pct, perm p) |
+|---|---|---|
+| all6_pca | k=7, obs=107.2, 95th=138.9, perm_p=0.4270 | k=7, obs=99.6, 95th=142.1, perm_p=0.6880 |
+| sad | k=2, obs=9.6, 95th=37.4, perm_p=0.9510 | k=4, obs=23.6, 95th=43.8, perm_p=0.4240 |
+| joy | k=5, obs=58.1, 95th=97.9, perm_p=0.6810 | k=5, obs=60.2, 95th=97.6, perm_p=0.6410 |
+
+*observed Fisher statistic exceeds the null's 95th percentile.
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/h4_bicoordination_table_exp1-exp2.csv
+
+| Movement | all6\_pca | sad | joy |
+|---|---|---|---|
+| exp1 trk1 | C=7.361, p=4.36e-08 | C=0.204, p=0.625 | C=2.694, p=0.00202 |
+| exp1 trk2 | C=1.299, p=0.0502 | C=0.014, p=0.969 | C=1.448, p=0.0356 |
+| exp1 trk3 | C=0.427, p=0.374 | C=2.685, p=0.00207 | -- |
+| exp1 trk4 | C=0.000, p=1 | C=0.214, p=0.61 | C=2.743, p=0.00181 |
+| exp2 trk1 | C=6.106, p=7.84e-07 | -- | C=2.144, p=0.00718 |
+| exp2 trk2 | C=5.958, p=1.1e-06 | -- | C=6.632, p=2.33e-07 |
+| exp2 trk3 | C=0.872, p=0.134 | -- | C=2.978, p=0.00105 |
+| exp2 trk4 | C=1.519, p=0.0303 | -- | C=0.149, p=0.71 |
+
+$^{\dagger}$degenerate/infeasible bin split -- not reliable evidence, excluded from the Fisher combination in build_bicoordination_between_table.py.
+Wrote /code/neuro-symphony/neurosymphony/analysis/figures/h4_bicoordination_between_table_exp1-exp2.csv
+
+| button_subset | k (movements) | Fisher observed | null 5th-95th pct band | two-sided permutation p |
+|---|---|---|---|---|
+| sad | 4 | 14.4 | [7.7, 30.9] | 0.7940 |
+| joy | 7 | 86.5 | [59.6, 102.0] | 0.6780 |
+| all6_pca | 8 | 108.4 | [61.2, 160.9] | 0.9380 |
+
+*observed Fisher statistic falls outside the null's 5th-95th percentile band.

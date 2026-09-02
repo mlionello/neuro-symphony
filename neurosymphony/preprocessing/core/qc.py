@@ -13,45 +13,22 @@ from .pressing import gmm_bimodal_threshold
 
 @dataclass(frozen=True)
 class ExclusionResult:
-    """Participant exclusion results replicating the dissertation pipeline.
-
-    The original dissertation scripts excluded participants based on three
-    categories (computed at the *movement* level):
-
-    - Poor button activity (pressing task)
-    - Not engaged (low post-movement engagement ratings)
-    - Skipping the description (reading time < 10s)
-
-    This dataclass keeps both the *per-user* sets and the GMM threshold used
-    for the pressing criterion.
-    """
-
     pressing_threshold: float
     excluded_pressing: Sequence[str]
     excluded_not_engaged: Sequence[str]
     excluded_skipping_desc: Sequence[str]
     excluded_union: Sequence[str]
 
-    # Additional “anomaly” lists computed in the original function but not
-    # used for exclusion (kept for parity / diagnostics).
     anomaly_users_std: Sequence[str]
     anomaly_users_iqr: Sequence[str]
 
 
 def _coalesce_track_value(df: pd.DataFrame, base: str) -> pd.Series:
-    """Return a unified per-row series for the current track.
-
-    The cleaned extraction keeps track-specific columns (e.g.
-    `track_1_reading_duration`) while the legacy scripts created unified
-    columns (e.g. `reading_dur`) per movement. This helper recreates the
-    legacy behavior.
-    """
 
     if base in df.columns:
         return df[base]
 
     if "track_number" not in df.columns:
-        # Best effort: return NA.
         return pd.Series([pd.NA] * len(df), index=df.index)
 
     out = pd.Series([pd.NA] * len(df), index=df.index)
@@ -63,21 +40,12 @@ def _coalesce_track_value(df: pd.DataFrame, base: str) -> pd.Series:
 
 
 def normalize_for_qc(df: pd.DataFrame) -> pd.DataFrame:
-    """Add legacy-compatible QC columns.
-
-    Adds/overwrites:
-    - `reading_dur`
-    - `track_q1_1`, `track_q1_2`, `track_q1_3`
-    """
 
     work = df.copy()
 
-    # Durations
     if "reading_dur" not in work.columns:
-        # In the web app this is stored as `reading_duration` (ms)
         work["reading_dur"] = _coalesce_track_value(work, "reading_duration")
 
-    # Engagement ratings
     for i in (1, 2, 3):
         legacy = f"track_q1_{i}"
         if legacy not in work.columns:
@@ -92,7 +60,6 @@ def _apply_multi_session_grace_rule(
     max_ratio: float,
     min_rows_for_grace: int = 8,
 ) -> List[str]:
-    """Replicate the original “grace rule” for multi-symphony participants."""
 
     flagged_copy = list(flagged_userids)
     out = list(flagged_userids)
@@ -105,30 +72,15 @@ def _apply_multi_session_grace_rule(
     return out
 
 
-def anomaly_detector_like_legacy(
+def detect_pressing_anomalies(
     df_raw: pd.DataFrame,
     pressing_column: str = "total_events",
     pressing_upper_limit: float = 80,
     reading_thr: int = 10000,
 ) -> ExclusionResult:
-    """Compute exclusions using the same logic as the legacy `anomaly_detector`.
-
-    Parameters
-    ----------
-    df_raw
-        Movement-level dataframe, typically the output of
-        `add_pressing_metrics.py`.
-    pressing_column
-        Column used for pressing QC (default `total_events`).
-    pressing_upper_limit
-        Upper limit filter used while fitting the bimodal GMM.
-    """
 
     df = normalize_for_qc(df_raw)
 
-    # --- Extra anomaly heuristics (computed, but not used for exclusion) ---
-    # The legacy function computed IQR- and mean/std-based anomalies on
-    # multiple pressing metrics. It parsed JSON arrays, then took their max.
     anomaly_users_iqr: List[str] = []
     anomaly_users_std: List[str] = []
 
@@ -155,7 +107,6 @@ def anomaly_detector_like_legacy(
                 return None
 
             parsed = work[k].apply(_parse)
-            # max over list-like values
             work[k] = parsed.apply(lambda x: max(x) if isinstance(x, list) and len(x) else np.nan)
 
     features = [
@@ -174,14 +125,12 @@ def anomaly_detector_like_legacy(
         if len(series) < 10:
             continue
 
-        # IQR rule
         q1 = series.quantile(0.25)
         q3 = series.quantile(0.75)
         iqr = q3 - q1
         lower_iqr = q1 - 1.5 * iqr
         anomaly_users_iqr.extend(work.loc[series.index[series < lower_iqr], "userid"].astype(str).tolist())
 
-        # mean/std rule (legacy used mean - 2*std)
         mean = float(series.mean())
         std = float(series.std())
         lower_std = mean - 2.0 * std

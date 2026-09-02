@@ -1,0 +1,22 @@
+Welcome to emmeans.
+Caution: You lose important information if you filter this package's results.
+See '? untidy'
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+=== categorical | Perceived Positive Emotion Intensity (track_q2_1) ===
+  Multiplier 0.50 | Subj: 18 | Sims: 1000
+  Multiplier 0.75 | Subj: 27 | Sims: 1000
+  Multiplier 1.00 | Subj: 36 | Sims: 1000
+  Multiplier 1.25 | Subj: 45 | Sims: 1000
+  Multiplier 1.50 | Subj: 54 | Sims: 1000
+Terminated
