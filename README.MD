@@ -42,7 +42,7 @@ neurosymphony/
 ## Data
 
 The raw per-participant anonymized data collected through the web app is saved in
-[`neurosymphony/web/userdata/`](neurosymphony/web/userdata/) — one JSON
+`neurosymphony/web/userdata/` (distributed as `neurosymphony/web/userdata.tar.xz`)
 session log per participant plus one continuous button-press CSV per
 movement, together containing:
 
