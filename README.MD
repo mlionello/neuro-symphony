@@ -9,20 +9,21 @@ In the study, participants complete an online, multi-session listening paradigm 
 neurosymphony/
   web/                  # PHP/JS data-collection app
     userdata/           # raw per-participant JSON logs + button-press CSVs (see Data below)
-    data/                # stimulus manifests (framework.json, audio-path CSVs, <symphony>_processed.csv)
+    data/                # stimulus manifests (framework.json, audio-path CSVs, <symphony>_processed.csv); in data.tar.xz
     php/ css/ js/ content/ security/ reset_password/
     README.MD            # app architecture, setup, deployment, security checklist
 
   data/
     audio/               #  audio stimulus files
     programnotes/
-      ratings/            # sorted_<symphony>_rating.csv — LLM valence/arousal scores per stimulus text
-      text-stimuli/        # README pointer to web/data/
+      ratings.tar.xz       # -> ratings/sorted_<symphony>_rating.csv — LLM valence/arousal scores per stimulus text
+      preprocessing.tar.xz # -> preprocessing/dataset.csv, dataset_categoricalonly.csv (reference tables)
+      README.md            # archive contents and extraction commands
 
   preprocessing/         # Python pipeline: raw web/userdata/ -> analysis-ready CSVs
     core/                 # reusable functions (extract, metrics, qc, merge, goldmsi, openai_feedback)
     scripts/              # CLI stages: extract_final, process_feedback_openai, build_dataset
-    dataset.csv, dataset_categoricalonly.csv   # checked-in reference output tables
+    dataset.csv, dataset_categoricalonly.csv   # reference output tables (in data/programnotes/preprocessing.tar.xz)
     README.md             # pipeline stages and quick start
 
   analysis/               # R/MATLAB/Python statistical analyses run on preprocessing's output
@@ -58,14 +59,21 @@ how to decode the condition assignment.
 
 The stimulus text corpus itself (the program notes shown, independent of
 any one participant) lives in
-[`neurosymphony/web/data/`](neurosymphony/web/data/) — see its `README.md`
-for the row layout (`neurosymphony/data/programnotes/text-stimuli/` just
-points here). The valence/arousal statistics for each individual
-text stimulus (from the LLM affective-scoring pipeline step) are available
-separately in
-[`neurosymphony/data/programnotes/ratings/`](neurosymphony/data/programnotes/ratings/),
-one CSV per symphony, row-aligned with that symphony's stimulus file — see
-`neurosymphony/web/data/README.md`'s ratings section for how the two line up.
+`neurosymphony/web/data/` (distributed as `neurosymphony/web/data.tar.xz`)
+— see its `README.md` for the row layout. The valence/arousal statistics
+for each individual text stimulus (from the LLM affective-scoring pipeline
+step) are available separately in
+`neurosymphony/data/programnotes/ratings/` (distributed as
+`neurosymphony/data/programnotes/ratings.tar.xz`), one CSV per symphony,
+row-aligned with that symphony's stimulus file. The processed tables the
+mixed-effects models were run against (`dataset.csv`,
+`dataset_categoricalonly.csv`) are distributed as
+`neurosymphony/data/programnotes/preprocessing.tar.xz` and extract into
+`neurosymphony/preprocessing/`. See
+[`neurosymphony/data/programnotes/README.md`](neurosymphony/data/programnotes/README.md)
+for both archives' contents and extraction commands, and
+[`neurosymphony/replication/README.md`](neurosymphony/replication/README.md)
+for the full unpack sequence.
 
 ## Pipeline: from raw data to published results
 
