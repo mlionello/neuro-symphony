@@ -75,6 +75,32 @@ for both archives' contents and extraction commands, and
 [`neurosymphony/replication/README.md`](neurosymphony/replication/README.md)
 for the full unpack sequence.
 
+## Musical stimuli
+
+Participants listened to eight symphonies, one per experiment session, each
+with all four movements. The audio recordings are in
+`neurosymphony/data/audio/`, one MP3 per movement named
+`<file key>_<I|II|III|IV>mvt.mp3` (e.g. `brahms3_IIImvt.mp3`), plus
+`Symphony_Fantastique.mp3`, the example played on the app's instruction
+page. No analysis or replication result needs them;
+the pipeline only reads the logged button presses and questionnaire answers.
+They are only needed to run the web app.
+
+| Experiment | Symphony | Conductor | Orchestra | File key |
+|---|---|---|---|---|
+| `exp1` | Brahms, Symphony No. 3 | Leonard Bernstein | Wiener Philharmoniker | `brahms3` |
+| `exp2` | Dvořák, Symphony No. 8 | Rafael Kubelík | Berliner Philharmoniker | `dvorak8` |
+| `exp3` | Schumann, Symphony No. 2 | Leonard Bernstein | Wiener Philharmoniker | `schumann2` |
+| `exp4` | Beethoven, Symphony No. 6 | Claudio Abbado | Wiener Philharmoniker | `beethoven6` |
+| `exp5` | Beethoven, Symphony No. 4 | Herbert von Karajan | Berliner Philharmoniker | `beethoven4` |
+| `exp6` | Schumann, Symphony No. 4 | Leonard Bernstein | Wiener Philharmoniker | `schumann4` |
+| `exp7` | Schubert, Symphony No. 4 | Herbert von Karajan | Berliner Philharmoniker | `schubert4` |
+| `exp8` | Mendelssohn, Symphony No. 4 | Myung-Whun Chung | Orchestre Philharmonique de Radio France | `mendelssohn4` |
+
+The experiment IDs are the ones used in `web/userdata/` and `framework.json`.
+The file key is the `<symphony>` part of `web/data/<symphony>_processed.csv`
+and `data/programnotes/ratings/sorted_<symphony>_rating.csv`.
+
 ## Pipeline: from raw data to published results
 
 1. [`web/`](neurosymphony/web/) collects the raw data (see its own `README.MD` for setup/deployment).
