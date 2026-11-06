@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Builds the PCA-composite "7th button" signal (1st principal component
 across the 6 real emotion buttons' held-state per movement, binarized by
-sign).
+sign). PC1 is oriented so that Calm/Tranquillity loads negatively; the
+t=0 UI-initialization row of each pressing log is dropped.
 
 Writes one per-participant composite pressing CSV per movement to
 `analysis/figures/pca_composite/`, plus
 `analysis/figures/pca_composite_manifest_exp1-exp2.csv`
-and `pca_composite_variance_explained.csv`.
+and `pca_composite_variance_explained.csv` (PC1 variance ratio and
+oriented loadings per movement).
 """
 from __future__ import annotations
 
@@ -44,6 +46,7 @@ def load_track_group(rows: pd.DataFrame):
         if not isinstance(p, str) or not Path(p).exists():
             continue
         m = load_pressing_csv(p)
+        m = m[m[:, 0] > 0]
         mats[row["userid"]] = m[:, 1:]
         ts[row["userid"]] = m[:, 0]
     if len(mats) < 2 * MIN_PARTICIPANTS_PER_GROUP:
@@ -61,12 +64,13 @@ def build_composite_for_movement(expid: str, track_number: int, mats: dict, min_
     pooled = np.concatenate([mats[u] for u in userids], axis=0)
     pca = PCA(n_components=1)
     pca.fit(pooled)
+    sign = -1.0 if pca.components_[0][BUTTON_LABELS.index("Calm/Tranquillity")] > 0 else 1.0
 
     composite = {}
     for u in userids:
-        scores = pca.transform(mats[u]).ravel()
+        scores = sign * pca.transform(mats[u]).ravel()
         composite[u] = (scores > 0).astype(int)
-    return composite, float(pca.explained_variance_ratio_[0])
+    return composite, float(pca.explained_variance_ratio_[0]), sign * pca.components_[0]
 
 
 def main():
@@ -85,7 +89,7 @@ def main():
             print(f"{expid} trk{track_number}: skipped (insufficient participants/frames)")
             continue
 
-        composite, var_ratio = build_composite_for_movement(expid, track_number, mats, min_len)
+        composite, var_ratio, loadings = build_composite_for_movement(expid, track_number, mats, min_len)
         cond_by_user = dict(zip(rows["userid"], rows["aggregated_condition_affective"]))
 
         for u, binary in composite.items():
@@ -94,7 +98,7 @@ def main():
             np.savetxt(out_path, out, delimiter=",", fmt=["%.3f", "%d"])
             manifest_rows.append({
                 "userid": u, "expid": expid, "track_number": track_number,
-                "pressing_csv": str(out_path),
+                "pressing_csv": os.path.relpath(out_path, DATA_DIR),
                 "aggregated_condition_affective": cond_by_user.get(u),
             })
 
@@ -102,6 +106,7 @@ def main():
             "expid": expid, "track_number": track_number,
             "n_participants": len(composite), "min_len": min_len,
             "pc1_variance_ratio": var_ratio,
+            **{f"loading_{label}": float(w) for label, w in zip(BUTTON_LABELS, loadings)},
         })
         print(f"{expid} trk{track_number}: n={len(composite)}, min_len={min_len}, "
               f"PC1 variance ratio={var_ratio:.3f}")

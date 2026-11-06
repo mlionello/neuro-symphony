@@ -118,6 +118,7 @@ for i = 1:height(rows)
         continue
     end
     raw = readmatrix(p);
+    raw = raw(raw(:, 1) > 0, :);
     if size(raw, 2) < 2
         continue
     end
@@ -161,13 +162,13 @@ switch eventType
     case 'held_state'
         stream = binaryMatrix;
     case 'press_onset'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix == 1 & prev == 0);
     case 'release_onset'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix == 0 & prev == 1);
     case 'any_transition'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix ~= prev);
     otherwise
         error('run_h4_pca_composite_table:build_event_frames:UnknownEventType', ...
