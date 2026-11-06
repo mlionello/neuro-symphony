@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 # Replicates: H4 between-listener synchrony -- within-condition Coordination
 # Score, Fisher-combined and permutation-calibrated across movements
-# (permutation p range .424-.951, i.e. no scope-by-condition combination
-# exceeded its null's 95th percentile) and the Bi-Coordination Score
-# between-group test: k=7/4/8 movements meeting the toolbox's minimum-cell
-# requirement for Joy/Happiness, Sadness, all6_pca respectively.
+# (Table 4: two-sided permutation p range .208-.778, null draws matched on the
+# number of movements combined) and the Bi-Coordination Score between-group
+# test (Table 5: two-sided p range .45-.90; k=6/4/7 movements meeting the
+# toolbox's minimum-cell requirement for Joy/Happiness, Sadness, all6_pca).
 #
 # Two-part pipeline (see ../analysis/synchrony_reanalysis/README.md):
-#   Part A (pure Python, no MATLAB) -- always runs here:
+#   Part A -- always runs here:
 #     pca_composite_events.py, which builds the PCA-composite "7th button"
 #     signal fed to the MATLAB scoring step below.
-#   Part B (MATLAB + Finn Upham's Activity Analysis Toolbox 2.1, an external
-#   prerequisite NOT bundled in this repo -- see the README above) -- scores
+#   Part B (+ Finn Upham's Activity Analysis Toolbox 2.1) -- scores
 #   Coordination/Bi-Coordination on real button + composite signals. If
 #   unavailable, this script SKIPS Part B and instead verifies Part C below
 #   against this repo's checked-in reference toolbox-output CSVs
-#   (analysis/figures/h4_*_toolbox_exp1-exp2.csv, h4_*permutation_test*.csv)
-#   -- i.e. it verifies the Fisher-combination/aggregation logic exactly
-#   reproduces both tables from already-scored data, while being
-#   explicit that the toolbox-scoring step itself could not be re-verified
-#   in this environment.
-#   Part C (pure Python, no MATLAB) -- always runs here:
+#   (analysis/figures/h4_*_toolbox_exp1-exp2.csv, h4_*permutation_test*.csv).
+#   Part C -- always runs here:
 #     build_within_synchrony_table.py, build_between_synchrony_table.py,
 #     build_bicoordination_table.py, build_bicoordination_between_table.py.
 #

@@ -6,14 +6,28 @@ a `run.sh` with the exact commands (it can be run from any location), and its ca
 stages depend on earlier stages' outputs (each `run.sh` checks for its
 prerequisites and fails fast with a clear message if they're missing).
 
+## Before running: unpack the data archives
+
+The data folders are distributed as compressed archives. From the
+`neurosymphony/` folder:
+
+```bash
+tar -xJf web/userdata.tar.xz -C web/                             # web/userdata/ (raw logs)
+tar -xzf data/programnotes/text-stimuli/data.tar.gz              # web/data/ + preprocessing/dataset*.csv
+tar -xJf data/programnotes/ratings.tar.xz -C data/programnotes/  # data/programnotes/ratings/
+tar -xJf analysis/figures/csv_out.tar.xz -C analysis/figures/    # reference outputs (06 without MATLAB)
+```
+
+## Results
+
 | # | Result | Status |
 |---|---|---|
-| [01_build_dataset](01_build_dataset/) | Raw `web/userdata/` -> `final.csv` -> `dataset_categoricalonly.csv`/`dataset.csv` | Verified: byte-identical to the checked-in reference tables in `preprocessing/` |
-| [02_h1_h3_mixed_models](02_h1_h3_mixed_models/) | H1-H3 categorical + continuous-valence mixed models (EMMs/deltas/F-tests) and its 9 figures | Verified: every EMM/delta/F/p matches at the reported precision |
+| [01_build_dataset](01_build_dataset/) | Raw `web/userdata/` -> `final.csv` -> `dataset_categoricalonly.csv`/`dataset.csv` | Verified from `web/userdata.tar.xz`: reproduces the reference tables in `data/programnotes/text-stimuli/data.tar.gz` (same 374/288 rows, exclusions and values). Row order follows the filesystem's folder listing, which also shifts ties in the unused `groups_gf` tertile column; `activation_rate`/`event_rate` can differ in the last digit across numpy/pandas versions |
+| [02_h1_h3_mixed_models](02_h1_h3_mixed_models/) | H1-H3 categorical + continuous-valence mixed models (EMMs/deltas/F-tests), effect estimates with 95% CIs and closed-form sensitivity (Table 3, Figure 5), and the model figures | Verified: every EMM/delta/F/p, 95% CI and MDE matches the manuscript; `effect_estimates_ci.csv` and the figures are byte-identical to the manuscript's |
 | [03_h1_button_press](03_h1_button_press/) | H1 button-press-activity sign/Wilcoxon tests (Joy/Happiness, Sadness) and the slopeplot figure | Verified: 7/7 and 6/7, p-values match exactly |
 | [04_press_times_figure](04_press_times_figure/) | `press_times_example.png` | Verified: n=13 Opp/n=11 Coher matches the script's own validated docstring. |
-| [05_power_analysis](05_power_analysis/) | Retrospective power percentages (93%/95%/>99%/64%) | Long-running (~36,000 model refits, can take hours) -- launch and check back |
-| [06_h4_synchrony](06_h4_synchrony/) | H4 between-listener synchrony (synchrony + bi-coordination tables) | Partially verified: the pure-Python aggregation stage reproduces both tables exactly (byte-identical to checked-in reference, and the reported k values / p-range match exactly) from this repo's checked-in reference toolbox-output CSVs |
+| [05_power_analysis](05_power_analysis/) | Retrospective power simulation (93%/95%/>99%/64%) | Long-running (~36,000 model refits) -- launch and check back |
+| [06_h4_synchrony](06_h4_synchrony/) | H4 between-listener synchrony (synchrony + bi-coordination tables) | Verified end-to-end (MATLAB R2024a + toolbox, 999 permutations): every toolbox output, both tables and the PC1 loadings (Table 6) are byte-identical to the checked-in reference outputs; the k values and two-sided p ranges match the manuscript. Part C reproduces both tables from the reference outputs in `csv_out.tar.xz` |
 
 ## External prerequisites
 
