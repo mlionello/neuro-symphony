@@ -14,7 +14,7 @@ REPO = Path(__file__).resolve().parent.parent.parent
 FIG_DIR = REPO / "analysis" / "figures"
 sys.path.insert(0, str(REPO / "analysis" / "synchrony_reanalysis"))
 
-from summarize_h4_fisher_permutation_test import fisher_stat
+from summarize_h4_fisher_permutation_test import fisher_stat, two_sided_matched_k
 
 BUTTON_SUBSETS = {
     "sad": (FIG_DIR / "h4_bicoord_permutation_test_exp1-exp2.csv", "Sadness"),
@@ -55,20 +55,19 @@ def run_cell(button_subset: str) -> dict:
     if 0 not in stat.index:
         return {
             "button_subset": button_subset, "k_movements": np.nan, "fisher_observed": np.nan,
-            "null_5th_percentile": np.nan, "null_95th_percentile": np.nan, "null_mean": np.nan,
+            "null_2.5th": np.nan, "null_97.5th": np.nan, "n_matched_draws": 0,
             "permutation_p_two_sided": np.nan, "significant_two_sided": None,
         }
 
     obs = stat.loc[0]
-    null = stat.drop(index=0).values
-    perm_p = _two_sided_empirical_p(obs, null)
-    p5 = float(np.percentile(null, 5))
-    p95 = float(np.percentile(null, 95))
+    test = two_sided_matched_k(obs, k.loc[0], stat.drop(index=0), k.drop(index=0))
 
     return {
         "button_subset": button_subset, "k_movements": int(k.loc[0]), "fisher_observed": float(obs),
-        "null_5th_percentile": p5, "null_95th_percentile": p95, "null_mean": float(null.mean()),
-        "permutation_p_two_sided": perm_p, "significant_two_sided": bool(obs > p95 or obs < p5),
+        "null_2.5th": test["null_2.5th"], "null_97.5th": test["null_97.5th"],
+        "n_matched_draws": test["n_matched_draws"],
+        "permutation_p_two_sided": test["p_two_sided"],
+        "significant_two_sided": bool(test["p_two_sided"] < 0.05),
     }
 
 
@@ -77,17 +76,17 @@ def build_table() -> pd.DataFrame:
 
 
 def make_markdown(table: pd.DataFrame) -> str:
-    out = ["| button_subset | k (movements) | Fisher observed | null 5th-95th pct band | two-sided permutation p |",
+    out = ["| button_subset | k (movements) | Fisher observed | null 2.5th-97.5th pct band (matched draws) | two-sided permutation p |",
            "|---|---|---|---|---|"]
     for _, row in table.iterrows():
         sig = "*" if row["significant_two_sided"] else ""
         out.append(
             f"| {row['button_subset']} | {int(row['k_movements'])} | {row['fisher_observed']:.1f} | "
-            f"[{row['null_5th_percentile']:.1f}, {row['null_95th_percentile']:.1f}] | "
+            f"[{row['null_2.5th']:.1f}, {row['null_97.5th']:.1f}] (n={row['n_matched_draws']}) | "
             f"{row['permutation_p_two_sided']:.4f}{sig} |"
         )
     out.append("")
-    out.append("*observed Fisher statistic falls outside the null's 5th-95th percentile band.")
+    out.append("*two-sided permutation p < .05 (null draws matched on the number of movements combined).")
     return "\n".join(out)
 
 

@@ -91,16 +91,6 @@ For local development you can either:
 - edit `key_path` to a local path you control, or
 - create the same path on your machine.
 
-### Credential store (`users.csv`)
-In production the app uses a CSV credential store (hashed usernames + password hashes, plus encrypted fields). Do not commit this file.
-
-Create an empty file to start:
-
-```bash
-touch neurosymphony/web/users.csv
-chmod 600 neurosymphony/web/users.csv
-```
-
 ### Stimuli configuration (`framework.json`)
 `web/data/framework.json` defines each listening experiment:
 - title
@@ -133,18 +123,3 @@ Downstream preprocessing discards timestamps, aligns participants, smooths, and 
 
 ### Experiment assignment log (CSV)
 `web/userdata/experiments_log.csv` records start/finish timestamps and the assigned condition category for balancing.
-
-## Security notes (production checklist)
-
-A hardened production setup includes:
-- protecting sensitive CSV files via server rules
-- disabling directory listing
-- restricting direct access to `userdata/`
-- sanitizing inputs and using POST/AJAX endpoints
-- avoiding SQL entirely (no SQL injection surface)
-
-If you deploy this publicly, at minimum:
-- serve over HTTPS
-- block web access to `userdata/` and credential files
-- ensure keys are not inside the repo
-- review and test permission boundaries

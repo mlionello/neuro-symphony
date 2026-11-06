@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Builds the H4 BETWEEN-synchrony table (Fisher-combined, permutation-
-calibrated Coordination Score per button_subset x affective-coherence
+"""Builds the H4 BETWEEN-synchrony table (Fisher-combined, two-sided
+permutation-calibrated Coordination Score per button_subset x affective-coherence
 condition).
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ FIG_DIR = REPO / "analysis" / "figures"
 sys.path.insert(0, str(REPO / "analysis" / "synchrony_reanalysis"))
 
 from summarize_h4_fisher_permutation_test import (  # noqa: E402
-    fisher_stat, per_draw_stats, _empirical_p,
+    per_draw_stats, two_sided_matched_k,
 )
 
 CONDITIONS = ["Aff Coher", "Aff Opp"]
@@ -44,21 +44,21 @@ def run_cell(button_subset: str, condition: str) -> dict:
         return {
             "button_subset": button_subset, "condition": condition,
             "k_movements": np.nan, "fisher_observed": np.nan,
-            "null_95th_percentile": np.nan, "null_mean": np.nan,
-            "permutation_p": np.nan, "significant_at_95pct": None,
+            "null_2.5th": np.nan, "null_97.5th": np.nan, "n_matched_draws": 0,
+            "permutation_p_two_sided": np.nan, "significant_two_sided": None,
         }
 
     obs = stats.loc[0]
-    null = stats.drop(index=0)["fisher_stat"].values
-
-    perm_p, pct_rank = _empirical_p(obs["fisher_stat"], null)
-    p95 = float(np.percentile(null, 95))
+    null = stats.drop(index=0)
+    test = two_sided_matched_k(obs["fisher_stat"], obs["k"], null["fisher_stat"], null["k"])
 
     return {
         "button_subset": button_subset, "condition": condition,
         "k_movements": int(obs["k"]), "fisher_observed": float(obs["fisher_stat"]),
-        "null_95th_percentile": p95, "null_mean": float(null.mean()),
-        "permutation_p": perm_p, "significant_at_95pct": bool(obs["fisher_stat"] > p95),
+        "null_2.5th": test["null_2.5th"], "null_97.5th": test["null_97.5th"],
+        "n_matched_draws": test["n_matched_draws"],
+        "permutation_p_two_sided": test["p_two_sided"],
+        "significant_two_sided": bool(test["p_two_sided"] < 0.05),
     }
 
 
@@ -69,20 +69,21 @@ def build_table() -> pd.DataFrame:
 
 def make_markdown(table: pd.DataFrame) -> str:
     wide = table.pivot(index="button_subset", columns="condition")
-    out = ["| button_subset | Aff Coher (k, Fisher obs, null 95th pct, perm p) | Aff Opp (k, Fisher obs, null 95th pct, perm p) |",
+    out = ["| button_subset | Aff Coher (k, Fisher obs, null 2.5-97.5 pct, two-sided p) | Aff Opp (k, Fisher obs, null 2.5-97.5 pct, two-sided p) |",
            "|---|---|---|"]
     for subset in ["all6_pca", "sad", "joy"]:
         cells = []
         for condition in CONDITIONS:
             row = table[(table.button_subset == subset) & (table.condition == condition)].iloc[0]
-            sig = "*" if row["significant_at_95pct"] else ""
+            sig = "*" if row["significant_two_sided"] else ""
             cells.append(
                 f"k={row['k_movements']}, obs={row['fisher_observed']:.1f}, "
-                f"95th={row['null_95th_percentile']:.1f}, perm_p={row['permutation_p']:.4f}{sig}"
+                f"[{row['null_2.5th']:.1f}, {row['null_97.5th']:.1f}] (n={row['n_matched_draws']}), "
+                f"p={row['permutation_p_two_sided']:.4f}{sig}"
             )
         out.append(f"| {subset} | {cells[0]} | {cells[1]} |")
     out.append("")
-    out.append("*observed Fisher statistic exceeds the null's 95th percentile.")
+    out.append("*two-sided permutation p < .05 (null draws matched on the number of movements combined).")
     return "\n".join(out)
 
 

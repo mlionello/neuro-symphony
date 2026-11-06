@@ -142,6 +142,7 @@ for i = 1:height(rows)
         continue
     end
     raw = readmatrix(p);
+    raw = raw(raw(:, 1) > 0, :);
     if size(raw, 2) < 2
         continue
     end
@@ -185,13 +186,13 @@ switch eventType
     case 'held_state'
         stream = binaryMatrix;
     case 'press_onset'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix == 1 & prev == 0);
     case 'release_onset'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix == 0 & prev == 1);
     case 'any_transition'
-        prev = [zeros(size(binaryMatrix, 1), 1), binaryMatrix(:, 1:end-1)];
+        prev = [binaryMatrix(:, 1), binaryMatrix(:, 1:end-1)];
         stream = double(binaryMatrix ~= prev);
     otherwise
         error('run_h4_pca_composite_bicoord_permutation_test:build_event_frames:UnknownEventType', ...
@@ -212,7 +213,7 @@ end
 end
 
 function [C, feasible, nBins] = score_from_bins(pVal, bins)
-feasible = ~isempty(bins);
+feasible = ~isempty(bins) && size(bins, 1) >= 2 && size(bins, 2) >= 2;
 if feasible
     nBins = size(bins, 1);
     C = min(-log10(max(pVal, 1e-16)), 16.0);

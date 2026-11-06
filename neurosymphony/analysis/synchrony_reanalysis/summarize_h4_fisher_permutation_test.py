@@ -58,6 +58,19 @@ def _empirical_p(observed: float, null: np.ndarray) -> tuple[float, float]:
     return p_value, pct_rank
 
 
+def two_sided_matched_k(obs_stat: float, obs_k: int, null_stats: pd.Series, null_k: pd.Series) -> dict:
+    null = null_stats[null_k == obs_k].values
+    n = len(null)
+    p_upper = (int(np.sum(null >= obs_stat)) + 1) / (n + 1)
+    p_lower = (int(np.sum(null <= obs_stat)) + 1) / (n + 1)
+    return {
+        "p_two_sided": float(min(1.0, 2.0 * min(p_upper, p_lower))),
+        "null_2.5th": float(np.percentile(null, 2.5)) if n else np.nan,
+        "null_97.5th": float(np.percentile(null, 97.5)) if n else np.nan,
+        "n_matched_draws": n,
+    }
+
+
 def run_and_report(df: pd.DataFrame, event_type: str, subset_name: str, condition: str):
     role = CONDITION_TO_ROLE[condition]
     buttons = BUTTON_SUBSETS[subset_name]

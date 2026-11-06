@@ -2,7 +2,7 @@ Welcome to emmeans.
 Caution: You lose important information if you filter this package's results.
 See '? untidy'
 
---- Perceived Positive Emotion Intensity | categorical (aggregated_condition_affective) ---
+--- Felt positive intensity (1–7) | categorical (aggregated_condition_affective) ---
  model term                             df1 df2 F.ratio  Chisq p.value
  aff_cond                                 1 Inf  12.629 12.629  0.0004
  aggregated_condition_injected            1 Inf   0.012  0.012  0.9130
@@ -40,8 +40,16 @@ aggregated_condition_injected = Ref:
  Aff Coher - Aff Opp    0.270 0.19 Inf   1.421  0.1554
 
 NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+                        outcome       model               effect estimate    SE
+1 Felt positive intensity (1–7) categorical  Coherent - Opposite   0.4685 0.132
+2 Felt positive intensity (1–7) categorical Injected - Reference  -0.0144 0.132
+  lower.CL upper.CL MDE_80
+1    0.210    0.727  0.369
+2   -0.273    0.244  0.370
+NOTE: Results may be misleading due to involvement in interactions
 
---- Perceived Positive Emotion Intensity | continuous (description_score_mvt_valence) ---
+--- Felt positive intensity (1–7) | continuous (description_score_mvt_valence) ---
  model term                             df1 df2 F.ratio  Chisq p.value
  aff_cond                                 1 Inf  14.805 14.805  0.0001
  aggregated_condition_injected            1 Inf   0.049  0.049  0.8256
@@ -99,9 +107,19 @@ Confidence level used: 0.95
  Inj - Ref    0.078 0.0418 Inf   1.867  0.0620
 
 NOTE: Results may be misleading due to involvement in interactions
+                        outcome      model
+1 Felt positive intensity (1–7) continuous
+2 Felt positive intensity (1–7) continuous
+                                  effect estimate     SE lower.CL upper.CL
+1                   Valence slope per SD   0.2350 0.0611    0.115    0.355
+2 Injected - Reference (at mean valence)  -0.0259 0.1174   -0.256    0.204
+  MDE_80
+1  0.171
+2  0.329
+NOTE: Results may be misleading due to involvement in interactions
 NOTE: Results may be misleading due to involvement in interactions
 
---- Perceived Negative Emotion Intensity | categorical (aggregated_condition_affective) ---
+--- Felt negative intensity (1–7) | categorical (aggregated_condition_affective) ---
  model term                             df1 df2 F.ratio Chisq p.value
  aff_cond                                 1 Inf   5.524 5.524  0.0188
  aggregated_condition_injected            1 Inf   0.014 0.014  0.9043
@@ -139,8 +157,16 @@ aggregated_condition_injected = Ref:
  Aff Coher - Aff Opp   -0.491 0.235 Inf  -2.085  0.0370
 
 NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+                        outcome       model               effect estimate    SE
+1 Felt negative intensity (1–7) categorical  Coherent - Opposite  -0.3836 0.163
+2 Felt negative intensity (1–7) categorical Injected - Reference   0.0197 0.164
+  lower.CL upper.CL MDE_80
+1   -0.703  -0.0637  0.457
+2   -0.301   0.3406  0.459
+NOTE: Results may be misleading due to involvement in interactions
 
---- Perceived Negative Emotion Intensity | continuous (description_score_mvt_valence) ---
+--- Felt negative intensity (1–7) | continuous (description_score_mvt_valence) ---
  model term                             df1 df2 F.ratio Chisq p.value
  aff_cond                                 1 Inf   3.088 3.088  0.0789
  aggregated_condition_injected            1 Inf   0.000 0.000  0.9955
@@ -198,9 +224,19 @@ Confidence level used: 0.95
  Inj - Ref     0.02 0.0491 Inf   0.406  0.6847
 
 NOTE: Results may be misleading due to involvement in interactions
+                        outcome      model
+1 Felt negative intensity (1–7) continuous
+2 Felt negative intensity (1–7) continuous
+                                  effect  estimate     SE lower.CL upper.CL
+1                   Valence slope per SD -0.126015 0.0717   -0.267   0.0145
+2 Injected - Reference (at mean valence) -0.000771 0.1382   -0.272   0.2700
+  MDE_80
+1  0.201
+2  0.387
+NOTE: Results may be misleading due to involvement in interactions
 NOTE: Results may be misleading due to involvement in interactions
 
---- Perceived Link With Description | categorical (aggregated_condition_affective) ---
+--- Text–music linkage (1–5) | categorical (aggregated_condition_affective) ---
  model term                             df1 df2 F.ratio  Chisq p.value
  aff_cond                                 1 Inf  36.906 36.906 <0.0001
  aggregated_condition_injected            1 Inf   0.156  0.156  0.6929
@@ -238,8 +274,16 @@ aggregated_condition_injected = Ref:
  Aff Coher - Aff Opp    0.768 0.159 Inf   4.824 <0.0001
 
 NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+                   outcome       model               effect estimate    SE
+1 Text–music linkage (1–5) categorical  Coherent - Opposite   0.6722 0.111
+2 Text–music linkage (1–5) categorical Injected - Reference  -0.0439 0.111
+  lower.CL upper.CL MDE_80
+1    0.455    0.889  0.310
+2   -0.262    0.174  0.311
+NOTE: Results may be misleading due to involvement in interactions
 
---- Perceived Link With Description | continuous (description_score_mvt_valence) ---
+--- Text–music linkage (1–5) | continuous (description_score_mvt_valence) ---
  model term                             df1 df2 F.ratio  Chisq p.value
  aff_cond                                 1 Inf  57.521 57.521 <0.0001
  aggregated_condition_injected            1 Inf   1.816  1.816  0.1778
@@ -297,4 +341,27 @@ Confidence level used: 0.95
  Inj - Ref  0.00378 0.0335 Inf   0.113  0.9102
 
 NOTE: Results may be misleading due to involvement in interactions
+                   outcome      model                                 effect
+1 Text–music linkage (1–5) continuous                   Valence slope per SD
+2 Text–music linkage (1–5) continuous Injected - Reference (at mean valence)
+  estimate     SE lower.CL upper.CL MDE_80
+1    0.358 0.0472    0.266    0.451  0.132
+2   -0.125 0.0931   -0.308    0.057  0.261
 NOTE: Results may be misleading due to involvement in interactions
+NOTE: Results may be misleading due to involvement in interactions
+
+--- Sensitivity: power to detect a true Coherent-Opposite difference (scale points) ---
+            Felt positive intensity (1–7) Felt negative intensity (1–7)
+delta = 0.1                          0.12                          0.09
+delta = 0.2                          0.33                          0.23
+delta = 0.3                          0.62                          0.45
+delta = 0.4                          0.86                          0.69
+delta = 0.5                          0.97                          0.87
+delta = 0.6                          1.00                          0.96
+            Text–music linkage (1–5)
+delta = 0.1                     0.15
+delta = 0.2                     0.44
+delta = 0.3                     0.77
+delta = 0.4                     0.95
+delta = 0.5                     0.99
+delta = 0.6                     1.00

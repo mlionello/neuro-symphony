@@ -2,8 +2,11 @@
 # Replicates: the H1-H3 mixed-effects models (EMMs/deltas/F-tests for
 # felt positive intensity, felt negative intensity, and text-music linkage;
 # both the categorical Coherent/Opposite model and the continuous-valence
-# model) and their figures (pos/neg/link_categorical_means.png,
-# pos/neg/link_continuous_curve.png, pos/neg/link_low_mid_high.png).
+# model), the effect estimates with 95% CIs and closed-form sensitivity
+# (Table 3; analysis/figures/effect_estimates_ci.csv), the sensitivity
+# curves (Figure 5; sensitivity_power_curves.png), and the model figures
+# (pos/neg/link_categorical_means.png, pos/neg/link_continuous_curve.png,
+# pos/neg/link_low_mid_high.png).
 #
 # Prerequisite: replication/01_build_dataset/run.sh must have been run first
 # (this script reads preprocessing/dataset_categoricalonly.csv and

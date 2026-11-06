@@ -72,8 +72,10 @@ python -m scripts.build_dataset --in final.csv --mode both
 - `final_aggr_allmovements_qc.csv` (`--mode all`) — row QC only, no movement-level
   gate.
 
-`dataset.csv` and `dataset_categoricalonly.csv` are checked into this folder as
-the exact tables the R scripts were run against.
+The exact `dataset.csv` and `dataset_categoricalonly.csv` the R scripts were
+run against are distributed as `../data/programnotes/preprocessing.tar.xz`. From the `neurosymphony/` folder,
+`tar -xJf data/programnotes/preprocessing.tar.xz` places them in this folder.
+Running stage 3 overwrites them with freshly built tables.
 
 ## Project layout
 
@@ -84,8 +86,8 @@ preprocessing/
   requirements-openai.txt       # optional (feedback processing)
   core/                         # reusable functions (the schema/QC authority)
   scripts/                      # CLI stages (extract_final, process_feedback_openai, build_dataset)
-  dataset.csv            # continuous-valence model's input table
-  dataset_categoricalonly.csv        # categorical model's input table
+  dataset.csv                   # continuous-valence model's input table (from preprocessing.tar.xz)
+  dataset_categoricalonly.csv   # categorical model's input table (from preprocessing.tar.xz)
 ```
 
 ## Notes
